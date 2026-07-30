@@ -52,3 +52,15 @@ export async function deleteVehicleById(id: string) {
 export async function listVehicles() {
 	return VehicleModel.find({}).sort({ createdAt: -1 }).exec();
 }
+
+export async function listAvailableVehicles() {
+	return VehicleModel.find({ quantity: { $gt: 0 } }).sort({ createdAt: -1 }).exec();
+}
+
+export async function incrementVehicleQuantity(id: string, amount: number) {
+	return VehicleModel.findByIdAndUpdate(id, { $inc: { quantity: amount } }, { new: true }).exec();
+}
+
+export async function decrementVehicleQuantity(id: string, amount: number) {
+	return VehicleModel.findByIdAndUpdate(id, { $inc: { quantity: -amount } }, { new: true }).exec();
+}

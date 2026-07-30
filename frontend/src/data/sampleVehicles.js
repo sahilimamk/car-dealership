@@ -11,7 +11,7 @@ export const sampleVehicles = [
     bodyType: "Sedan",
     color: "White",
     quantity: 5,
-    image: null,
+    image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: 2,
@@ -25,7 +25,7 @@ export const sampleVehicles = [
     bodyType: "SUV",
     color: "Black",
     quantity: 2,
-    image: null,
+    image: "https://images.unsplash.com/photo-1549399542-7e3f8b79d7d7?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: 3,
@@ -39,7 +39,7 @@ export const sampleVehicles = [
     bodyType: "Sedan",
     color: "Silver",
     quantity: 0,
-    image: null,
+    image: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: 4,
@@ -53,7 +53,7 @@ export const sampleVehicles = [
     bodyType: "SUV",
     color: "Red",
     quantity: 4,
-    image: null,
+    image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: 5,
@@ -67,7 +67,7 @@ export const sampleVehicles = [
     bodyType: "SUV",
     color: "Blue",
     quantity: 6,
-    image: null,
+    image: "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: 6,
@@ -81,7 +81,7 @@ export const sampleVehicles = [
     bodyType: "SUV",
     color: "Grey",
     quantity: 3,
-    image: null,
+    image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: 7,
@@ -95,7 +95,7 @@ export const sampleVehicles = [
     bodyType: "Hatchback",
     color: "White",
     quantity: 8,
-    image: null,
+    image: "https://images.unsplash.com/photo-1489824904134-891ab64532f1?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: 8,
@@ -109,7 +109,7 @@ export const sampleVehicles = [
     bodyType: "Sedan",
     color: "Black",
     quantity: 5,
-    image: null,
+    image: "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: 9,
@@ -123,7 +123,7 @@ export const sampleVehicles = [
     bodyType: "Sedan",
     color: "Silver",
     quantity: 2,
-    image: null,
+    image: "https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: 10,
@@ -137,7 +137,7 @@ export const sampleVehicles = [
     bodyType: "SUV",
     color: "Green",
     quantity: 4,
-    image: null,
+    image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: 11,
@@ -151,7 +151,7 @@ export const sampleVehicles = [
     bodyType: "SUV",
     color: "Black",
     quantity: 1,
-    image: null,
+    image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: 12,
@@ -165,7 +165,7 @@ export const sampleVehicles = [
     bodyType: "Sedan",
     color: "Blue",
     quantity: 2,
-    image: null,
+    image: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: 13,
@@ -179,7 +179,7 @@ export const sampleVehicles = [
     bodyType: "Sedan",
     color: "White",
     quantity: 2,
-    image: null,
+    image: "https://images.unsplash.com/photo-1549399542-7e3f8b79d7d7?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: 14,
@@ -193,7 +193,7 @@ export const sampleVehicles = [
     bodyType: "SUV",
     color: "Red",
     quantity: 1,
-    image: null,
+    image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: 15,
@@ -207,7 +207,7 @@ export const sampleVehicles = [
     bodyType: "SUV",
     color: "Green",
     quantity: 3,
-    image: null,
+    image: "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: 16,
@@ -221,7 +221,7 @@ export const sampleVehicles = [
     bodyType: "SUV",
     color: "Orange",
     quantity: 7,
-    image: null,
+    image: "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: 17,
@@ -235,7 +235,7 @@ export const sampleVehicles = [
     bodyType: "SUV",
     color: "Blue",
     quantity: 5,
-    image: null,
+    image: "https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: 18,
@@ -249,7 +249,7 @@ export const sampleVehicles = [
     bodyType: "Hatchback",
     color: "Yellow",
     quantity: 6,
-    image: null,
+    image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: 19,
@@ -263,7 +263,7 @@ export const sampleVehicles = [
     bodyType: "SUV",
     color: "Grey",
     quantity: 1,
-    image: null,
+    image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: 20,
@@ -277,6 +277,6 @@ export const sampleVehicles = [
     bodyType: "Sedan",
     color: "Silver",
     quantity: 2,
-    image: null,
+    image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80",
   },
 ];

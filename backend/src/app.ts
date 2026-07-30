@@ -3,6 +3,7 @@ import cors from 'cors';
 import authRoutes from './routes/auth';
 import vehicleRoutes from './routes/vehicles';
 import { ensureDefaultAdminUser } from './stores/userStore';
+import { seed } from './seeds/seed';
 
 export function createApp() {
 	const app = express();
@@ -23,7 +24,10 @@ export function createApp() {
 
 	void ensureDefaultAdminUser();
 
+	// Run seed on startup (idempotent — skips if data already exists)
+	void seed().catch((err) => console.error('[seed] Failed:', err));
+
 	return app;
 }
 
-export default createApp;
+export default createApp;

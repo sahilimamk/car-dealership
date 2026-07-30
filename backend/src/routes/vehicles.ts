@@ -58,6 +58,12 @@ router.get('/', authenticate, async (_req, res) => {
 	return res.status(200).json(vehicles.filter((vehicle) => vehicle.quantity > 0));
 });
 
+// Admin-only: returns ALL vehicles including out-of-stock, for inventory management
+router.get('/admin', authenticate, adminOnly, async (_req, res) => {
+	const vehicles = await listVehicles();
+	return res.status(200).json(vehicles);
+});
+
 router.get('/search', authenticate, async (req, res) => {
 	const { make, model, category, minPrice, maxPrice } = req.query as {
 		make?: string;

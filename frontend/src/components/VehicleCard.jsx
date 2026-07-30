@@ -62,9 +62,17 @@ const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete }) => {
             src={imageUrl}
             alt={`${year} ${make} ${model}`}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            onError={(event) => {
+              event.currentTarget.onerror = null;
+              event.currentTarget.src = '/car-placeholder.svg';
+            }}
           />
         ) : (
-          <span className="text-gray-400 text-sm font-medium">No Image Available</span>
+          <img
+            src="/car-placeholder.svg"
+            alt={`${year} ${make} ${model}`}
+            className="w-full h-full object-cover"
+          />
         )}
 
         {/* Stock Badge */}

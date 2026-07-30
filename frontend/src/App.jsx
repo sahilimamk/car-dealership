@@ -12,7 +12,6 @@
  */
 
 import { Routes, Route, Navigate } from 'react-router-dom';
-import ProtectedRoute from './components/common/ProtectedRoute';
 import Home from './pages/Home';
 import Inventory from './pages/Inventory';
 import About from './pages/About';
@@ -24,18 +23,14 @@ export default function App() {
   return (
     <Routes>
       {/* ── Public routes ─────────────────────────────────────── */}
-      <Route path="/login"    element={<Login />} />
+      <Route path="/" element={<Home />} />
+      <Route path="/inventory" element={<Inventory />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
-      {/* ── Protected routes ──────────────────────────────────── */}
-      <Route element={<ProtectedRoute />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/inventory" element={<Inventory />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-      </Route>
-
-      {/* ── Catch-all → dashboard (protected) ────────────────── */}
+      {/* ── Catch-all → dashboard ─────────────────────────────── */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

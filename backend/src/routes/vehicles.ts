@@ -53,7 +53,7 @@ router.post('/', authenticate, async (req, res) => {
 	return res.status(201).json(vehicle);
 });
 
-router.get('/', authenticate, async (_req, res) => {
+router.get('/', async (_req, res) => {
 	const vehicles = await listVehicles();
 	return res.status(200).json(vehicles.filter((vehicle) => vehicle.quantity > 0));
 });
@@ -64,7 +64,7 @@ router.get('/admin', authenticate, adminOnly, async (_req, res) => {
 	return res.status(200).json(vehicles);
 });
 
-router.get('/search', authenticate, async (req, res) => {
+router.get('/search', async (req, res) => {
 	const { make, model, category, minPrice, maxPrice } = req.query as {
 		make?: string;
 		model?: string;

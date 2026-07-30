@@ -99,10 +99,11 @@ describe('Vehicle Endpoints (RED)', () => {
 		createdVehicleId = vehicleResponse.body.id;
 	});
 
-	it('GET /api/vehicles - should reject unauthenticated requests', async () => {
+	it('GET /api/vehicles - should allow unauthenticated visitors to browse inventory', async () => {
 		const res = await request(app).get('/api/vehicles');
 
-		expect(res.status).toBe(401);
+		expect(res.status).toBe(200);
+		expect(Array.isArray(res.body)).toBe(true);
 	});
 
 	it('POST /api/vehicles - should create a vehicle record for admin users', async () => {

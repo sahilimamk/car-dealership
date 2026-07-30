@@ -22,8 +22,8 @@ AutoVault is a full-stack car dealership inventory experience built with React +
 
 ## My AI Usage
 
-This project was developed with AI-assisted implementation and review.
+This project was developed with AI-assisted implementation, testing, and review.
 
-- AI tools used: GitHub Copilot, local terminal-based verification, and iterative test-driven development.
-- AI contributions included app scaffolding, backend route implementation, frontend state wiring, and documentation updates.
-- Workflow reflection: the implementation followed a TDD approach for backend behavior and verification through automated tests and build checks.
+- AI tools used: GitHub Copilot for code generation, debugging, and test scaffolding, plus local terminal-based verification and iterative TDD.
+- How I used AI: I used GitHub Copilot to draft and refine backend tests for authentication and vehicle flows, then implemented the corresponding routes and UI wiring while verifying behavior through Vitest and Vite builds.
+- Workflow reflection: AI accelerated the development loop by helping me move quickly from failing tests to working features, while I still reviewed the implementation carefully and verified behavior through automated checks.

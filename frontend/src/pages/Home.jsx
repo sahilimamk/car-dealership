@@ -1,53 +1,43 @@
-import React from 'react';
-import Navbar from "../components/layout/Navbar";
-import VehicleCard from "../components/vehicle/VehicleCard";
+import { useMemo, useState } from 'react';
+import Navbar from "../components/Navbar";
+import VehicleCard from "../components/VehicleCard";
+import SearchBar from "../components/SearchBar";
+import { sampleVehicles } from "../data/sampleVehicles";
 
-const placeholderVehicles = [
-  {
-    id: 1,
-    make: "Toyota",
-    model: "Camry",
-    year: 2023,
-    price: 3250000,
-    mileage: 12000,
-    transmission: "Automatic",
-    fuelType: "Petrol",
-    bodyType: "Sedan",
-    color: "White",
-    quantity: 5,
-    image: null,
-  },
-  {
-    id: 2,
-    make: "Hyundai",
-    model: "Creta",
-    year: 2024,
-    price: 1890000,
-    mileage: 8000,
-    transmission: "Manual",
-    fuelType: "Diesel",
-    bodyType: "SUV",
-    color: "Black",
-    quantity: 2,
-    image: null,
-  },
-  {
-    id: 3,
-    make: "Honda",
-    model: "City",
-    year: 2022,
-    price: 1450000,
-    mileage: 22000,
-    transmission: "Automatic",
-    fuelType: "Petrol",
-    bodyType: "Sedan",
-    color: "Silver",
-    quantity: 0,
-    image: null,
-  },
-];
 
 const Home = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState({
+    category: "",
+    min: "",
+    max: "",
+  });
+
+  const filteredVehicles = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+
+    return sampleVehicles.filter((vehicle) => {
+      const matchesQuery =
+        !query ||
+        [vehicle.make, vehicle.model, vehicle.year, vehicle.bodyType]
+          .join(" ")
+          .toLowerCase()
+          .includes(query);
+
+      const matchesCategory =
+        !filters.category || vehicle.bodyType === filters.category;
+
+      const price = Number(vehicle.price);
+      const minPrice = filters.min === "" ? null : Number(filters.min);
+      const maxPrice = filters.max === "" ? null : Number(filters.max);
+
+      const matchesMin = minPrice === null || price >= minPrice;
+      const matchesMax = maxPrice === null || price <= maxPrice;
+
+      return matchesQuery && matchesCategory && matchesMin && matchesMax;
+    });
+  }, [searchQuery, filters]);
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col">
       {/* Navbar Placeholder */}
@@ -75,30 +65,12 @@ const Home = () => {
       {/* Main Inventory Section */}
       <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        {/* Search and Sort Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-          <div className="w-full md:w-1/2 lg:w-1/3">
-            {/* FUTURE: <SearchBar /> */}
-            <div className="relative">
-              <input 
-                type="text" 
-                placeholder="Search vehicles by make, model, or VIN..." 
-                className="w-full pl-4 pr-10 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm"
-              />
-              <span className="absolute right-3 top-2.5 text-gray-400">🔍</span>
-            </div>
-          </div>
-          <div className="w-full md:w-auto flex items-center gap-3">
-            <span className="text-sm font-medium text-gray-500">Total Vehicles: [Count]</span>
-            <select className="bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 outline-none">
-              <option>Sort by: Newest Added</option>
-              <option>Sort by: Price (Low to High)</option>
-              <option>Sort by: Price (High to Low)</option>
-              <option>Sort by: Stock (Low to High)</option>
-            </select>
-          </div>
-        </div>
-
+<SearchBar
+          totalVehicles={sampleVehicles.length}
+          onSearch={setSearchQuery}
+          onFilter={setFilters}
+        />
+           
         <div className="flex flex-col lg:flex-row gap-8">
           
           {/* Filters Sidebar */}
@@ -125,14 +97,24 @@ const Home = () => {
 
 {/* Vehicle Grid */}
 <div className="w-full lg:w-3/4 xl:w-4/5">
+  <div className="mb-4 text-sm text-gray-600">
+    Showing <span className="font-semibold text-gray-900">{filteredVehicles.length}</span> of{' '}
+    <span className="font-semibold text-gray-900">{sampleVehicles.length}</span> vehicles
+  </div>
   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-    {placeholderVehicles.map((vehicle) => (
+    {filteredVehicles.map((vehicle) => (
       <VehicleCard
         key={vehicle.id}
         vehicle={vehicle}
       />
     ))}
   </div>
+
+  {filteredVehicles.length === 0 && (
+    <div className="mt-8 rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center text-gray-500">
+      No vehicles match your search.
+    </div>
+  )}
 </div>
         </div>
       </main>

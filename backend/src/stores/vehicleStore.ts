@@ -12,6 +12,12 @@ export interface StoredVehicle {
 	quantity: number;
 	imageUrl?: string | null;
 	description?: string | null;
+	// Optional descriptive fields
+	transmission?: string | null;
+	fuelType?: string | null;
+	mileage?: number | null;
+	bodyType?: string | null;
+	color?: string | null;
 	createdAt: string;
 	updatedAt: string;
 }
@@ -33,6 +39,11 @@ function toStoredVehicle(vehicle: {
 	quantity: number;
 	imageUrl?: string | null;
 	description?: string | null;
+	transmission?: string | null;
+	fuelType?: string | null;
+	mileage?: number | null;
+	bodyType?: string | null;
+	color?: string | null;
 	createdAt?: Date;
 	updatedAt?: Date;
 }): StoredVehicle {
@@ -46,6 +57,11 @@ function toStoredVehicle(vehicle: {
 		quantity: vehicle.quantity,
 		imageUrl: vehicle.imageUrl || null,
 		description: vehicle.description || null,
+		transmission: vehicle.transmission || null,
+		fuelType: vehicle.fuelType || null,
+		mileage: vehicle.mileage ?? null,
+		bodyType: vehicle.bodyType || null,
+		color: vehicle.color || null,
 		createdAt: vehicle.createdAt?.toISOString() || new Date().toISOString(),
 		updatedAt: vehicle.updatedAt?.toISOString() || new Date().toISOString(),
 	};

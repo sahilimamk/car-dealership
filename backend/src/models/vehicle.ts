@@ -9,6 +9,12 @@ export interface VehicleAttributes {
 	quantity: number;
 	imageUrl?: string | null;
 	description?: string | null;
+	// Optional descriptive fields added for seed/display purposes
+	transmission?: string | null;
+	fuelType?: string | null;
+	mileage?: number | null;
+	bodyType?: string | null;
+	color?: string | null;
 }
 
 export interface VehicleDocument extends VehicleAttributes {
@@ -27,6 +33,12 @@ const vehicleSchema = new Schema<VehicleDocument, Model<VehicleDocument>>(
 		quantity: { type: Number, required: true, min: 0 },
 		imageUrl: { type: String, default: null },
 		description: { type: String, default: null },
+		// Optional descriptive fields
+		transmission: { type: String, default: null },
+		fuelType: { type: String, default: null },
+		mileage: { type: Number, default: null },
+		bodyType: { type: String, default: null },
+		color: { type: String, default: null },
 	},
 	{ timestamps: true }
 );

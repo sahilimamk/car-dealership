@@ -1,17 +1,17 @@
 /**
  * ProtectedRoute.jsx
  *
- * Wraps any route that requires authentication.
- * If no token exists in localStorage the user is redirected to /login.
- * Once AuthContext is in place this will read from context instead.
+ * Redirects unauthenticated users to /login.
+ * Reads auth state from AuthContext.
  */
 
 import { Navigate, Outlet } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 export default function ProtectedRoute() {
-  const token = localStorage.getItem('token');
+  const { isAuthenticated } = useAuth();
 
-  if (!token) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 

@@ -1,27 +1,46 @@
 import { Router } from 'express';
+import { z } from 'zod';
 import { authenticate } from '../middleware/auth';
 import { adminOnly } from '../middleware/admin';
-import { createVehicle, deleteVehicle, findVehicleById, purchaseVehicle, restockVehicle, searchVehicles, updateVehicle, listVehicles } from '../stores/vehicleStore';
+import { createVehicle, deleteVehicle, purchaseVehicle, restockVehicle, searchVehicles, updateVehicle, listVehicles } from '../stores/vehicleStore';
 
 const router = Router();
 
-router.post('/', authenticate, async (req, res) => {
-	const { make, model, category, year, price, quantity, imageUrl, description } = req.body as {
-		make?: string;
-		model?: string;
-		category?: string;
-		year?: number;
-		price?: number;
-		quantity?: number;
-		imageUrl?: string | null;
-		description?: string | null;
-	};
+const createVehicleSchema = z.object({
+	make: z.string().min(1),
+	model: z.string().min(1),
+	category: z.string().min(1),
+	year: z.number().int().positive(),
+	price: z.number().positive(),
+	quantity: z.number().int().min(0),
+	imageUrl: z.string().nullable().optional(),
+	description: z.string().nullable().optional(),
+});
 
-	if (!make || !model || !category || typeof year !== 'number' || typeof price !== 'number' || typeof quantity !== 'number') {
-		return res.status(400).json({ error: 'Invalid vehicle payload.' });
+router.post('/', authenticate, async (req, res) => {
+	const parsed = createVehicleSchema.safeParse(req.body);
+
+	if (!parsed.success) {
+		return res.status(422).json({
+			errors: parsed.error.issues.map((issue) => ({
+				path: issue.path.join('.'),
+				message: issue.message,
+			})),
+		});
 	}
 
-	const vehicle = await createVehicle({ make, model, category, year, price, quantity, imageUrl: imageUrl || null, description: description || null });
+	const { make, model, category, year, price, quantity, imageUrl, description } = parsed.data;
+	const vehicle = await createVehicle({
+		make,
+		model,
+		category,
+		year,
+		price,
+		quantity,
+		imageUrl: imageUrl ?? null,
+		description: description ?? null,
+	});
+
 	return res.status(201).json(vehicle);
 });
 

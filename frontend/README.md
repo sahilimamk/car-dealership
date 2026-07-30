@@ -1,16 +1,29 @@
-# React + Vite
+# AutoVault Car Dealership
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AutoVault is a full-stack car dealership inventory experience built with React + Tailwind on the frontend and Node.js + Express + MongoDB on the backend.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- User registration and login with JWT-based authentication
+- Inventory browsing with search, filtering, sorting, and stock indicators
+- Admin capabilities for creating, editing, deleting, and restocking vehicles
+- Seeded demo inventory and an admin account for local and production use
 
-## React Compiler
+## Local development
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Frontend: `npm run dev`
+- Backend: `npm run dev`
+- Backend tests: `npm test`
 
-## Expanding the ESLint configuration
+## Production notes
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Frontend should use `VITE_API_URL` pointing at the Render backend API base URL.
+- The backend auto-seeds the database on startup when the app boots.
+
+## My AI Usage
+
+This project was developed with AI-assisted implementation and review.
+
+- AI tools used: GitHub Copilot, local terminal-based verification, and iterative test-driven development.
+- AI contributions included app scaffolding, backend route implementation, frontend state wiring, and documentation updates.
+- Workflow reflection: the implementation followed a TDD approach for backend behavior and verification through automated tests and build checks.

@@ -51,8 +51,9 @@ export default function Home() {
   const [filters, setFilters]   = useState(initialFilters);
   const [sortBy, setSortBy]     = useState('newest');
 
-  // Add modal state
+  // Modal state
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingVehicle, setEditingVehicle] = useState(null);
 
   // Debounce timer ref
   const debounceRef = useRef(null);
@@ -107,6 +108,27 @@ export default function Home() {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
   }, [filters, fetchResults]);
+
+  function handleVehicleAdded(newVehicle) {
+    setVehicles((prev) => [newVehicle, ...prev]);
+  }
+
+  function handleVehicleUpdated(updatedVehicle) {
+    setVehicles((prev) => prev.map((vehicle) => (vehicle.id === updatedVehicle.id ? updatedVehicle : vehicle)));
+  }
+
+  function handleVehiclePurchased(updatedVehicle) {
+    setVehicles((prev) => prev.map((vehicle) => (vehicle.id === updatedVehicle.id ? updatedVehicle : vehicle)));
+  }
+
+  function handleVehicleDeleted(vehicleId) {
+    setVehicles((prev) => prev.filter((vehicle) => vehicle.id !== vehicleId));
+  }
+
+  function closeModal() {
+    setShowAddModal(false);
+    setEditingVehicle(null);
+  }
 
   // ── Client-side refinement for fields the backend doesn't filter ─────────
   const filteredVehicles = useMemo(() => {
@@ -261,7 +283,13 @@ export default function Home() {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {sortedVehicles.map((vehicle) => (
-                    <VehicleCard key={vehicle.id} vehicle={vehicle} />
+                    <VehicleCard
+                      key={vehicle.id}
+                      vehicle={vehicle}
+                      onPurchase={handleVehiclePurchased}
+                      onEdit={(nextVehicle) => setEditingVehicle(nextVehicle)}
+                      onDelete={handleVehicleDeleted}
+                    />
                   ))}
                 </div>
               )
@@ -270,14 +298,20 @@ export default function Home() {
         </div>
       </main>
 
-      {/* ── Add Vehicle Modal (admin only) ── */}
+      {/* ── Vehicle modal (admin only) ── */}
       {isAdmin && (
         <VehicleFormModal
-          key={showAddModal ? 'add-open' : 'add-closed'}
-          isOpen={showAddModal}
-          onClose={() => setShowAddModal(false)}
-          onSuccess={(newVehicle) => {
-            setVehicles((prev) => [newVehicle, ...prev]);
+          key={showAddModal ? 'add-open' : editingVehicle?.id || 'edit-closed'}
+          isOpen={showAddModal || Boolean(editingVehicle)}
+          vehicle={editingVehicle}
+          onClose={closeModal}
+          onSuccess={(savedVehicle) => {
+            if (editingVehicle) {
+              handleVehicleUpdated(savedVehicle);
+            } else {
+              handleVehicleAdded(savedVehicle);
+            }
+            closeModal();
           }}
         />
       )}

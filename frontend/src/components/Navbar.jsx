@@ -26,7 +26,7 @@
 //
 // ============================================================
 
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
@@ -60,33 +60,33 @@ export default function Navbar() {
 
         <div className="hidden gap-8 md:flex">
 
-          <Link
+          <NavLink
             to="/"
-            className="font-medium text-gray-700 hover:text-blue-600 transition"
+            className={({ isActive }) => `font-medium transition ${isActive ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}
           >
             Home
-          </Link>
+          </NavLink>
 
-          <Link
+          <NavLink
             to="/inventory"
-            className="font-medium text-gray-700 hover:text-blue-600 transition"
+            className={({ isActive }) => `font-medium transition ${isActive ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}
           >
             Inventory
-          </Link>
+          </NavLink>
 
-          <Link
+          <NavLink
             to="/about"
-            className="font-medium text-gray-700 hover:text-blue-600 transition"
+            className={({ isActive }) => `font-medium transition ${isActive ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}
           >
             About
-          </Link>
+          </NavLink>
 
-          <Link
+          <NavLink
             to="/contact"
-            className="font-medium text-gray-700 hover:text-blue-600 transition"
+            className={({ isActive }) => `font-medium transition ${isActive ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}
           >
             Contact
-          </Link>
+          </NavLink>
 
         </div>
 

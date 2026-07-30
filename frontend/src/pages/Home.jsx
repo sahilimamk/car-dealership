@@ -170,34 +170,39 @@ export default function Home() {
           <div className="w-full lg:flex-1">
 
             {/* ── Toolbar: count + sort ── */}
-            {!loading && !error && (
-              <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <p className="text-sm text-gray-600">
-                  Showing{' '}
-                  <span className="font-semibold text-gray-900">{sortedVehicles.length}</span>
-                  {' '}vehicle{sortedVehicles.length !== 1 ? 's' : ''}
-                </p>
+            <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <p className="text-sm text-gray-600">
+                {loading
+                  ? 'Loading…'
+                  : error
+                  ? ''
+                  : <>
+                      Showing{' '}
+                      <span className="font-semibold text-gray-900">{sortedVehicles.length}</span>
+                      {' '}vehicle{sortedVehicles.length !== 1 ? 's' : ''}
+                    </>
+                }
+              </p>
 
-                {/* Sort control */}
-                <div className="flex items-center gap-2">
-                  <label htmlFor="sort-select" className="text-sm text-gray-600 whitespace-nowrap">
-                    Sort by:
-                  </label>
-                  <select
-                    id="sort-select"
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                  >
-                    {SORT_OPTIONS.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              {/* Sort control — always visible */}
+              <div className="flex items-center gap-2">
+                <label htmlFor="sort-select" className="text-sm text-gray-600 whitespace-nowrap">
+                  Sort by:
+                </label>
+                <select
+                  id="sort-select"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                >
+                  {SORT_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
               </div>
-            )}
+            </div>
 
             {/* ── Loading state ── */}
             {loading && (

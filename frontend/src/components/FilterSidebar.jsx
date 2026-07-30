@@ -2,16 +2,17 @@ import { useState } from "react";
 
 const BRAND_OPTIONS = [
   "Toyota",
-  "Hyundai",
   "Honda",
-  "Tata",
-  "Mahindra",
-  "Kia",
-  "Maruti Suzuki",
-  "Volkswagen",
-  "Skoda",
+  "Ford",
   "BMW",
+  "Mercedes-Benz",
+  "Chevrolet",
+  "Jeep",
+  "Volkswagen",
+  "Tesla",
 ];
+
+const CATEGORY_OPTIONS = ["Sedan", "SUV", "Coupe", "Hatchback", "Truck"];
 
 const YEAR_OPTIONS = [
   { label: "2024 & Above", value: 2024 },
@@ -20,7 +21,7 @@ const YEAR_OPTIONS = [
   { label: "2018 & Above", value: 2018 },
 ];
 
-const FUEL_OPTIONS = ["Petrol", "Diesel", "Electric", "Hybrid", "CNG"];
+const FUEL_OPTIONS = ["Gasoline", "Diesel", "Electric", "Hybrid", "CNG"];
 const TRANSMISSION_OPTIONS = ["Manual", "Automatic"];
 
 const defaultFilters = {
@@ -28,6 +29,7 @@ const defaultFilters = {
   minPrice: "",
   maxPrice: "",
   brands: [],
+  category: "",
   year: "",
   fuelTypes: [],
   transmission: "",
@@ -38,7 +40,6 @@ function FilterSidebar({ onFilterChange } = {}) {
 
   function notifyFilterChange(nextFilters) {
     if (onFilterChange) {
-      // TODO: Connect this payload to backend filtering when the API is ready.
       onFilterChange(nextFilters);
     }
   }
@@ -147,6 +148,31 @@ function FilterSidebar({ onFilterChange } = {}) {
                     className="rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                   />
                 </label>
+              </div>
+            </section>
+
+            {/* ── Category ── */}
+            <section className="rounded-xl bg-gray-50 p-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
+                Category
+              </h3>
+              <div className="mt-4 space-y-3">
+                {CATEGORY_OPTIONS.map((cat) => {
+                  const radioId = `category-${cat.toLowerCase()}`;
+                  return (
+                    <label key={cat} htmlFor={radioId} className="flex items-center gap-3 text-sm text-gray-700">
+                      <input
+                        id={radioId}
+                        type="radio"
+                        name="category"
+                        checked={filters.category === cat}
+                        onChange={() => handleRadioChange("category", cat)}
+                        className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="font-medium">{cat}</span>
+                    </label>
+                  );
+                })}
               </div>
             </section>
 

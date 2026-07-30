@@ -23,6 +23,7 @@ const initialFilters = {
   minPrice: '',
   maxPrice: '',
   brands: [],
+  category: '',
   year: '',
   fuelTypes: [],
   transmission: '',
@@ -54,18 +55,20 @@ export default function Home() {
     // Build backend-supported query params
     const params = {};
 
-    // searchQuery maps to both make and model — we send it as `make` here;
-    // the backend OR-search is not supported so we search by make broadly.
-    // Additional client-side filtering catches model/year matches.
+    // searchQuery is sent as `make` to the backend for a broad name search.
+    // Client-side pass below also matches model + year from returned results.
     if (activeFilters.searchQuery.trim()) {
       params.make = activeFilters.searchQuery.trim();
     }
+
+    // Category — sent directly to backend when selected
+    if (activeFilters.category) {
+      params.category = activeFilters.category;
+    }
+
+    // Price range goes straight to the backend.
     if (activeFilters.minPrice !== '') params.minPrice = activeFilters.minPrice;
     if (activeFilters.maxPrice !== '') params.maxPrice = activeFilters.maxPrice;
-
-    // Category: use first selected brand as category proxy if sidebar
-    // has a category; for now category comes from FilterSidebar which
-    // doesn't have a category field — handled client-side below.
 
     let cancelled = false;
 

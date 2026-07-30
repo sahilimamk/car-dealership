@@ -17,6 +17,7 @@ import FilterSidebar from '../components/FilterSidebar';
 import VehicleFormModal from '../components/admin/VehicleFormModal';
 import { searchVehicles } from '../api/vehicles';
 import { useAuth } from '../context/AuthContext';
+import { sampleVehicles } from '../data/sampleVehicles';
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -85,10 +86,17 @@ export default function Home() {
 
     searchVehicles(params)
       .then((data) => {
-        if (!cancelled) setVehicles(data);
+        if (!cancelled) {
+          const normalized = Array.isArray(data) ? data : [];
+          setVehicles(normalized.length > 0 ? normalized : sampleVehicles);
+        }
       })
-      .catch(() => {
-        if (!cancelled) setError('Failed to load vehicles. Please try again.');
+      .catch((err) => {
+        if (!cancelled) {
+          const message = err?.response?.data?.error || 'Failed to load vehicles. Please try again.';
+          setError(message);
+          setVehicles(sampleVehicles);
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -263,6 +271,7 @@ export default function Home() {
             {!loading && error && (
               <div className="rounded-xl border border-red-200 bg-red-50 p-8 text-center">
                 <p className="text-red-700 font-medium">{error}</p>
+                <p className="mt-2 text-sm text-red-600">Showing the built-in sample inventory while the live API is unavailable.</p>
                 <button
                   type="button"
                   onClick={() => setFilters({ ...initialFilters })}

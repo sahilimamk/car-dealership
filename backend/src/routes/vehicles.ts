@@ -6,19 +6,28 @@ import { createVehicle, deleteVehicle, purchaseVehicle, restockVehicle, searchVe
 
 const router = Router();
 
-const createVehicleSchema = z.object({
-	make: z.string().min(1),
-	model: z.string().min(1),
-	category: z.string().min(1),
-	year: z.number().int().positive(),
-	price: z.number().positive(),
-	quantity: z.number().int().min(0),
-	imageUrl: z.string().nullable().optional(),
+// Base schema for vehicle creation
+const vehicleSchema = z.object({
+	make: z.string().min(1, 'Make is required'),
+	model: z.string().min(1, 'Model is required'),
+	category: z.string().min(1, 'Category is required'),
+	year: z.number().int().min(1886).max(new Date().getFullYear() + 1),
+	price: z.number().positive('Price must be positive'),
+	quantity: z.number().int().min(0, 'Quantity cannot be negative'),
+	imageUrl: z.string().url().nullable().optional(),
 	description: z.string().nullable().optional(),
 });
 
+// Schema for partial updates
+const updateSchema = vehicleSchema.partial();
+
+// Schema for restocking inventory
+const restockSchema = z.object({
+	amount: z.number().int().positive('Amount must be a positive integer'),
+});
+
 router.post('/', authenticate, async (req, res) => {
-	const parsed = createVehicleSchema.safeParse(req.body);
+	const parsed = vehicleSchema.safeParse(req.body);
 
 	if (!parsed.success) {
 		return res.status(422).json({
@@ -70,7 +79,18 @@ router.get('/search', authenticate, async (req, res) => {
 });
 
 router.put('/:id', authenticate, async (req, res) => {
-	const updated = await updateVehicle(req.params.id, req.body);
+	const parsed = updateSchema.safeParse(req.body);
+
+	if (!parsed.success) {
+		return res.status(422).json({
+			errors: parsed.error.issues.map((issue) => ({
+				path: issue.path.join('.'),
+				message: issue.message,
+			})),
+		});
+	}
+
+	const updated = await updateVehicle(req.params.id, parsed.data);
 
 	if (!updated) {
 		return res.status(404).json({ error: 'Vehicle not found.' });
@@ -100,11 +120,13 @@ router.post('/:id/purchase', authenticate, async (req, res) => {
 });
 
 router.post('/:id/restock', authenticate, adminOnly, async (req, res) => {
-	const amount = Number(req.body?.amount);
+	const parsed = restockSchema.safeParse(req.body);
 
-	if (!Number.isInteger(amount) || amount <= 0) {
+	if (!parsed.success) {
 		return res.status(400).json({ error: 'Restock amount must be a positive integer.' });
 	}
+
+	const amount = parsed.data.amount;
 
 	const updated = await restockVehicle(req.params.id, amount);
 

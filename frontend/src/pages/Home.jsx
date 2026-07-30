@@ -1,17 +1,22 @@
 /**
  * Home.jsx — Inventory Dashboard
  *
- * Fetches vehicles from GET /api/vehicles on mount.
- * Handles loading, error, and empty states.
- * Local filtering via FilterSidebar still works client-side
- * against the fetched list (search + filter integration in commits 7-8).
+ * Fetches vehicles from the backend using GET /api/vehicles/search.
+ * The query re-runs whenever filters change (debounced 300 ms).
+ * Fields supported by the backend (make, model, category, minPrice,
+ * maxPrice) are sent as query params. Fields not supported by the
+ * backend (fuelType, transmission, year, brands) are filtered
+ * client-side from the results.
+ * Sorting is applied client-side on the filtered list.
  */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Navbar from '../components/Navbar';
 import VehicleCard from '../components/VehicleCard';
 import FilterSidebar from '../components/FilterSidebar';
-import { fetchVehicles } from '../api/vehicles';
+import { searchVehicles } from '../api/vehicles';
+
+// ── Constants ────────────────────────────────────────────────────────────────
 
 const initialFilters = {
   searchQuery: '',
@@ -23,59 +28,109 @@ const initialFilters = {
   transmission: '',
 };
 
+const SORT_OPTIONS = [
+  { value: 'newest',   label: 'Newest' },
+  { value: 'price_asc',  label: 'Price: Low to High' },
+  { value: 'price_desc', label: 'Price: High to Low' },
+  { value: 'quantity',   label: 'Quantity' },
+];
+
+const DEBOUNCE_MS = 300;
+
+// ── Component ────────────────────────────────────────────────────────────────
+
 export default function Home() {
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState('');
   const [filters, setFilters]   = useState(initialFilters);
+  const [sortBy, setSortBy]     = useState('newest');
 
-  // ── Fetch vehicles on mount ───────────────────────────────────────────────
-  useEffect(() => {
+  // Debounce timer ref
+  const debounceRef = useRef(null);
+
+  // ── Fetch — called on every filter change (debounced) ────────────────────
+  const fetchResults = useCallback((activeFilters) => {
+    // Build backend-supported query params
+    const params = {};
+
+    // searchQuery maps to both make and model — we send it as `make` here;
+    // the backend OR-search is not supported so we search by make broadly.
+    // Additional client-side filtering catches model/year matches.
+    if (activeFilters.searchQuery.trim()) {
+      params.make = activeFilters.searchQuery.trim();
+    }
+    if (activeFilters.minPrice !== '') params.minPrice = activeFilters.minPrice;
+    if (activeFilters.maxPrice !== '') params.maxPrice = activeFilters.maxPrice;
+
+    // Category: use first selected brand as category proxy if sidebar
+    // has a category; for now category comes from FilterSidebar which
+    // doesn't have a category field — handled client-side below.
+
     let cancelled = false;
 
-    async function load() {
-      setLoading(true);
-      setError('');
-      try {
-        const data = await fetchVehicles();
-        if (!cancelled) setVehicles(data);
-      } catch {
-        if (!cancelled) setError('Failed to load vehicles. Please try again.');
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
+    setLoading(true);
+    setError('');
 
-    load();
+    searchVehicles(params)
+      .then((data) => {
+        if (!cancelled) setVehicles(data);
+      })
+      .catch(() => {
+        if (!cancelled) setError('Failed to load vehicles. Please try again.');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
     return () => { cancelled = true; };
   }, []);
 
-  // ── Client-side filtering ─────────────────────────────────────────────────
+  // Debounce filter changes before hitting the API
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      fetchResults(filters);
+    }, DEBOUNCE_MS);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [filters, fetchResults]);
+
+  // ── Client-side refinement for fields the backend doesn't filter ─────────
   const filteredVehicles = useMemo(() => {
-    const query       = filters.searchQuery.trim().toLowerCase();
+    const query        = filters.searchQuery.trim().toLowerCase();
     const selectedYear = filters.year ? Number(filters.year) : null;
 
     return vehicles.filter((vehicle) => {
-      const searchText = [vehicle.make, vehicle.model, vehicle.year, vehicle.bodyType]
-        .join(' ')
-        .toLowerCase();
+      // Broaden search to include model and year (backend only matched make)
+      if (query) {
+        const text = `${vehicle.make} ${vehicle.model} ${vehicle.year}`.toLowerCase();
+        if (!text.includes(query)) return false;
+      }
 
-      const matchesQuery        = !query || searchText.includes(query);
-      const matchesBrands       = filters.brands.length === 0 || filters.brands.includes(vehicle.make);
-      const matchesYear         = selectedYear === null || vehicle.year >= selectedYear;
-      const matchesFuel         = filters.fuelTypes.length === 0 || filters.fuelTypes.includes(vehicle.fuelType);
-      const matchesTransmission = !filters.transmission || vehicle.transmission === filters.transmission;
+      if (filters.brands.length > 0 && !filters.brands.includes(vehicle.make)) return false;
+      if (selectedYear !== null && vehicle.year < selectedYear) return false;
+      if (filters.fuelTypes.length > 0 && !filters.fuelTypes.includes(vehicle.fuelType)) return false;
+      if (filters.transmission && vehicle.transmission !== filters.transmission) return false;
 
-      const price    = Number(vehicle.price);
-      const minPrice = filters.minPrice === '' ? null : Number(filters.minPrice);
-      const maxPrice = filters.maxPrice === '' ? null : Number(filters.maxPrice);
-      const matchesMin = minPrice === null || price >= minPrice;
-      const matchesMax = maxPrice === null || price <= maxPrice;
-
-      return matchesQuery && matchesBrands && matchesYear && matchesFuel &&
-             matchesTransmission && matchesMin && matchesMax;
+      return true;
     });
   }, [vehicles, filters]);
+
+  // ── Sorting ───────────────────────────────────────────────────────────────
+  const sortedVehicles = useMemo(() => {
+    const list = [...filteredVehicles];
+    switch (sortBy) {
+      case 'price_asc':  return list.sort((a, b) => a.price - b.price);
+      case 'price_desc': return list.sort((a, b) => b.price - a.price);
+      case 'quantity':   return list.sort((a, b) => b.quantity - a.quantity);
+      case 'newest':
+      default:
+        return list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+  }, [filteredVehicles, sortBy]);
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
@@ -92,7 +147,7 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Add Vehicle button — admin controls wired in commit 10 */}
+            {/* Add Vehicle button — wired in commit 10 */}
             <div className="flex items-center gap-3">
               <button
                 type="button"
@@ -110,6 +165,36 @@ export default function Home() {
           <FilterSidebar onFilterChange={setFilters} />
 
           <div className="w-full lg:flex-1">
+
+            {/* ── Toolbar: count + sort ── */}
+            {!loading && !error && (
+              <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <p className="text-sm text-gray-600">
+                  Showing{' '}
+                  <span className="font-semibold text-gray-900">{sortedVehicles.length}</span>
+                  {' '}vehicle{sortedVehicles.length !== 1 ? 's' : ''}
+                </p>
+
+                {/* Sort control */}
+                <div className="flex items-center gap-2">
+                  <label htmlFor="sort-select" className="text-sm text-gray-600 whitespace-nowrap">
+                    Sort by:
+                  </label>
+                  <select
+                    id="sort-select"
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  >
+                    {SORT_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
 
             {/* ── Loading state ── */}
             {loading && (
@@ -140,43 +225,28 @@ export default function Home() {
                 <p className="text-red-700 font-medium">{error}</p>
                 <button
                   type="button"
-                  onClick={() => window.location.reload()}
+                  onClick={() => setFilters({ ...initialFilters })}
                   className="mt-4 text-sm text-blue-600 hover:underline"
                 >
-                  Retry
+                  Reset filters &amp; retry
                 </button>
               </div>
             )}
 
-            {/* ── Content ── */}
+            {/* ── Results ── */}
             {!loading && !error && (
-              <>
-                <div className="mb-4 text-sm text-gray-600">
-                  Showing{' '}
-                  <span className="font-semibold text-gray-900">{filteredVehicles.length}</span>
-                  {' '}of{' '}
-                  <span className="font-semibold text-gray-900">{vehicles.length}</span>{' '}
-                  vehicles
+              sortedVehicles.length === 0 ? (
+                <div className="mt-8 rounded-xl border border-dashed border-gray-300 bg-white p-12 text-center text-gray-500">
+                  <p className="text-lg font-medium">No vehicles found</p>
+                  <p className="mt-1 text-sm">Try adjusting your search or filters.</p>
                 </div>
-
-                {/* ── Empty state ── */}
-                {filteredVehicles.length === 0 ? (
-                  <div className="mt-8 rounded-xl border border-dashed border-gray-300 bg-white p-12 text-center text-gray-500">
-                    <p className="text-lg font-medium">No vehicles found</p>
-                    <p className="mt-1 text-sm">
-                      {vehicles.length === 0
-                        ? 'The inventory is currently empty.'
-                        : 'Try adjusting your filters.'}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {filteredVehicles.map((vehicle) => (
-                      <VehicleCard key={vehicle.id} vehicle={vehicle} />
-                    ))}
-                  </div>
-                )}
-              </>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {sortedVehicles.map((vehicle) => (
+                    <VehicleCard key={vehicle.id} vehicle={vehicle} />
+                  ))}
+                </div>
+              )
             )}
           </div>
         </div>

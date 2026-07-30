@@ -10,8 +10,14 @@
 
 import axios from 'axios';
 
+function getApiBaseUrl() {
+  const configured = (import.meta.env.VITE_API_URL || '').trim();
+  const fallback = import.meta.env.DEV ? '/api' : 'https://car-dealership-4ff1.onrender.com/api';
+  return (configured || fallback).replace(/\/$/, '');
+}
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: getApiBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },

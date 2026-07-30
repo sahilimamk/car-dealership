@@ -7,7 +7,9 @@
  */
 
 function getApiBaseUrl() {
-  const baseUrl = import.meta.env.DEV ? '/api' : (import.meta.env.VITE_API_URL || '/api');
+  const configured = (import.meta.env.VITE_API_URL || '').trim();
+  const fallback = import.meta.env.DEV ? '/api' : 'https://car-dealership-4ff1.onrender.com/api';
+  const baseUrl = configured || fallback;
   return baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
 }
 

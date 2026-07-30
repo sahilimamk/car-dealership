@@ -16,7 +16,6 @@ import VehicleCard from '../components/VehicleCard';
 import FilterSidebar from '../components/FilterSidebar';
 import VehicleFormModal from '../components/admin/VehicleFormModal';
 import { searchVehicles } from '../api/vehicles';
-import { useAuth } from '../context/AuthContext';
 import { sampleVehicles } from '../data/sampleVehicles';
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -44,8 +43,6 @@ const DEBOUNCE_MS = 300;
 // ── Component ────────────────────────────────────────────────────────────────
 
 export default function Home() {
-  const { isAdmin } = useAuth();
-
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState('');
@@ -189,15 +186,13 @@ export default function Home() {
 
             {/* Add Vehicle button — admin only */}
             <div className="flex items-center gap-3">
-              {isAdmin && (
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(true)}
-                  className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow transition-colors flex items-center gap-2"
-                >
-                  <span>+</span> Add New Vehicle
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => setShowAddModal(true)}
+                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow transition-colors flex items-center gap-2"
+              >
+                <span>+</span> Add New Vehicle
+              </button>
             </div>
           </div>
         </div>
@@ -307,23 +302,21 @@ export default function Home() {
         </div>
       </main>
 
-      {/* ── Vehicle modal (admin only) ── */}
-      {isAdmin && (
-        <VehicleFormModal
-          key={showAddModal ? 'add-open' : editingVehicle?.id || 'edit-closed'}
-          isOpen={showAddModal || Boolean(editingVehicle)}
-          vehicle={editingVehicle}
-          onClose={closeModal}
-          onSuccess={(savedVehicle) => {
-            if (editingVehicle) {
-              handleVehicleUpdated(savedVehicle);
-            } else {
-              handleVehicleAdded(savedVehicle);
-            }
-            closeModal();
-          }}
-        />
-      )}
+      {/* ── Vehicle modal ── */}
+      <VehicleFormModal
+        key={showAddModal ? 'add-open' : editingVehicle?.id || 'edit-closed'}
+        isOpen={showAddModal || Boolean(editingVehicle)}
+        vehicle={editingVehicle}
+        onClose={closeModal}
+        onSuccess={(savedVehicle) => {
+          if (editingVehicle) {
+            handleVehicleUpdated(savedVehicle);
+          } else {
+            handleVehicleAdded(savedVehicle);
+          }
+          closeModal();
+        }}
+      />
     </div>
   );
 }

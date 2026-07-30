@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { purchaseVehicle, deleteVehicle } from '../api/vehicles';
-import { useAuth } from '../context/AuthContext';
 
 const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete }) => {
-  const { isAdmin } = useAuth();
   const {
     id,
     make = 'Unknown Make',
@@ -84,26 +82,24 @@ const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete }) => {
           {isOutOfStock ? 'Out of Stock' : 'In Stock'}
         </div>
 
-        {/* Admin Edit / Delete controls */}
-        {isAdmin && (
-          <div className="absolute top-3 right-3 flex gap-1">
-            <button
-              type="button"
-              onClick={() => onEdit && onEdit(vehicle)}
-              className="rounded-md bg-white/90 backdrop-blur px-2 py-1 text-xs font-semibold text-gray-700 shadow hover:bg-blue-600 hover:text-white transition-colors"
-            >
-              Edit
-            </button>
-            <button
-              type="button"
-              onClick={handleDelete}
-              disabled={deleting}
-              className="rounded-md bg-white/90 backdrop-blur px-2 py-1 text-xs font-semibold text-red-600 shadow hover:bg-red-600 hover:text-white transition-colors disabled:opacity-50"
-            >
-              {deleting ? '…' : 'Delete'}
-            </button>
-          </div>
-        )}
+        {/* Edit / Delete controls */}
+        <div className="absolute top-3 right-3 flex gap-1">
+          <button
+            type="button"
+            onClick={() => onEdit && onEdit(vehicle)}
+            className="rounded-md bg-white/90 backdrop-blur px-2 py-1 text-xs font-semibold text-gray-700 shadow hover:bg-blue-600 hover:text-white transition-colors"
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            onClick={handleDelete}
+            disabled={deleting}
+            className="rounded-md bg-white/90 backdrop-blur px-2 py-1 text-xs font-semibold text-red-600 shadow hover:bg-red-600 hover:text-white transition-colors disabled:opacity-50"
+          >
+            {deleting ? '…' : 'Delete'}
+          </button>
+        </div>
       </div>
 
       {/* Card Content */}
@@ -175,8 +171,8 @@ const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete }) => {
             {purchasing ? 'Processing…' : isOutOfStock ? 'Out of Stock' : 'Purchase'}
           </button>
 
-          {/* Admin: Restock — only shown when out of stock */}
-          {isAdmin && isOutOfStock && (
+          {/* Restock — shown when out of stock */}
+          {isOutOfStock && (
             <button
               type="button"
               onClick={() => onEdit && onEdit(vehicle)}

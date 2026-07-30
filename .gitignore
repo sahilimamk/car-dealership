@@ -3,3 +3,7 @@ node_modules/
 *.db
 dist/
 frontend/dist/
+
+# Backend secrets and sqlite data
+/backend/.env
+/backend/data/

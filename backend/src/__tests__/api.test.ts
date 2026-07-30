@@ -1,18 +1,10 @@
-import express from 'express';
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
+import createApp from '../app';
 
-function createTestApp() {
-	const app = express();
-	app.use(express.json());
-	return app;
-}
+const app = createApp();
 
-let app: ReturnType<typeof createTestApp>;
-
-beforeAll(() => {
-	app = createTestApp();
-});
+beforeAll(() => undefined);
 
 describe('Auth Endpoints (TDD)', () => {
 	it('POST /api/auth/register - should create a new user and return token', async () => {

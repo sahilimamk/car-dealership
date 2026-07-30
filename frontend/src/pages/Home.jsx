@@ -14,7 +14,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Navbar from '../components/Navbar';
 import VehicleCard from '../components/VehicleCard';
 import FilterSidebar from '../components/FilterSidebar';
+import VehicleFormModal from '../components/admin/VehicleFormModal';
 import { searchVehicles } from '../api/vehicles';
+import { useAuth } from '../context/AuthContext';
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -41,11 +43,16 @@ const DEBOUNCE_MS = 300;
 // ── Component ────────────────────────────────────────────────────────────────
 
 export default function Home() {
+  const { isAdmin } = useAuth();
+
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState('');
   const [filters, setFilters]   = useState(initialFilters);
   const [sortBy, setSortBy]     = useState('newest');
+
+  // Add modal state
+  const [showAddModal, setShowAddModal] = useState(false);
 
   // Debounce timer ref
   const debounceRef = useRef(null);
@@ -150,14 +157,17 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Add Vehicle button — wired in commit 10 */}
+            {/* Add Vehicle button — admin only */}
             <div className="flex items-center gap-3">
-              <button
-                type="button"
-                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow transition-colors flex items-center gap-2"
-              >
-                <span>+</span> Add New Vehicle
-              </button>
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(true)}
+                  className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow transition-colors flex items-center gap-2"
+                >
+                  <span>+</span> Add New Vehicle
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -259,6 +269,18 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      {/* ── Add Vehicle Modal (admin only) ── */}
+      {isAdmin && (
+        <VehicleFormModal
+          key={showAddModal ? 'add-open' : 'add-closed'}
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          onSuccess={(newVehicle) => {
+            setVehicles((prev) => [newVehicle, ...prev]);
+          }}
+        />
+      )}
     </div>
   );
 }

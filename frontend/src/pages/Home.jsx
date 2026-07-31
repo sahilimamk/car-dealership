@@ -273,11 +273,14 @@ export default function Home() {
       </header>
 
       {/* ── Main content ── */}
-      <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
+      <main className="flex-grow flex flex-col lg:flex-row">
+        {/* ── Sidebar — flush to left edge ── */}
+        <div className="flex-shrink-0 w-full lg:w-64 xl:w-72 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700">
           <FilterSidebar onFilterChange={(f) => { setFilters(f); setCurrentPage(1); }} />
+        </div>
 
-          <div className="w-full lg:flex-1 min-w-0">
+        {/* ── Main grid area ── */}
+        <div className="flex-grow min-w-0 px-4 sm:px-6 py-8">
 
             {/* Toolbar */}
             <div className="mb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -422,7 +425,6 @@ export default function Home() {
                   </>
                 )
             )}
-          </div>
         </div>
       </main>
 

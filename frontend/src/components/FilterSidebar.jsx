@@ -93,8 +93,8 @@ function FilterSidebar({ onFilterChange } = {}) {
   }
 
   return (
-    <aside className="w-full lg:w-80 xl:w-96 flex-shrink-0">
-      <div className="sticky top-24 flex h-[calc(100vh-6rem)] flex-col overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm">
+    <aside className="w-full h-full">
+      <div className="sticky top-16 flex h-[calc(100vh-4rem)] flex-col overflow-hidden bg-white dark:bg-gray-900">
         <div className="border-b border-gray-100 dark:border-gray-700 px-5 py-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Filters</h2>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
@@ -167,7 +167,7 @@ function FilterSidebar({ onFilterChange } = {}) {
                         name="category"
                         checked={filters.category === cat}
                         onChange={() => handleRadioChange("category", cat)}
-                        className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="h-4 w-4 border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-700 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-400"
                       />
                       <span className="font-medium">{cat}</span>
                     </label>
@@ -191,7 +191,7 @@ function FilterSidebar({ onFilterChange } = {}) {
                         type="checkbox"
                         checked={filters.brands.includes(brand)}
                         onChange={() => handleCheckboxChange("brands", brand)}
-                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="h-4 w-4 rounded border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-700 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-400"
                       />
                       <span className="font-medium">{brand}</span>
                     </label>
@@ -216,7 +216,7 @@ function FilterSidebar({ onFilterChange } = {}) {
                         name="year"
                         checked={filters.year === String(option.value)}
                         onChange={() => handleRadioChange("year", String(option.value))}
-                        className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="h-4 w-4 border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-700 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-400"
                       />
                       <span className="font-medium">{option.label}</span>
                     </label>
@@ -240,7 +240,7 @@ function FilterSidebar({ onFilterChange } = {}) {
                         type="checkbox"
                         checked={filters.fuelTypes.includes(fuelType)}
                         onChange={() => handleCheckboxChange("fuelTypes", fuelType)}
-                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="h-4 w-4 rounded border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-700 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-400"
                       />
                       <span className="font-medium">{fuelType}</span>
                     </label>
@@ -265,7 +265,7 @@ function FilterSidebar({ onFilterChange } = {}) {
                         name="transmission"
                         checked={filters.transmission === transmission}
                         onChange={() => handleRadioChange("transmission", transmission)}
-                        className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="h-4 w-4 border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-700 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-400"
                       />
                       <span className="font-medium">{transmission}</span>
                     </label>
@@ -276,11 +276,11 @@ function FilterSidebar({ onFilterChange } = {}) {
           </div>
         </div>
 
-        <div className="border-t border-gray-100 bg-white px-5 py-4">
+        <div className="border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900 px-5 py-4">
           <button
             type="button"
             onClick={clearFilters}
-            className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-gray-700 transition hover:border-blue-500 hover:text-blue-600"
+            className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-3 text-sm font-semibold text-gray-700 dark:text-gray-200 transition hover:border-blue-500 hover:text-blue-600 dark:hover:border-blue-400 dark:hover:text-blue-400"
           >
             Clear Filters
           </button>

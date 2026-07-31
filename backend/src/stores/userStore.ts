@@ -59,15 +59,8 @@ export async function ensureDefaultAdminUser() {
 	const email = 'admin@car-dealership.com';
 	const passwordHash = await bcrypt.hash('Admin123!', 10);
 
+	// MongoDB path is handled by seed() in index.ts — this only covers in-memory
 	if (isMongoReady()) {
-		// Always upsert so the hash is always fresh
-		await updateMongoUserById ? null : null; // no-op reference
-		const { UserModel } = await import('../models/user');
-		await UserModel.findOneAndUpdate(
-			{ username },
-			{ username, email, passwordHash, role: 'admin' },
-			{ upsert: true, new: true }
-		);
 		return;
 	}
 

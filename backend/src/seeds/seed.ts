@@ -9,6 +9,7 @@
 import bcrypt from 'bcryptjs';
 import { findUserByUsername, createUser } from '../stores/userStore';
 import { listVehicles, createVehicle } from '../stores/vehicleStore';
+import { UserModel } from '../models/user';
 
 // ---------------------------------------------------------------------------
 // Demo users
@@ -247,7 +248,6 @@ export async function seed(): Promise<void> {
     console.log(`[seed] Admin user '${ADMIN_USER.username}' created.`);
   } else {
     // Force-update password hash so deployment changes never break login
-    const { UserModel } = await import('../models/user');
     await UserModel.findOneAndUpdate(
       { username: ADMIN_USER.username },
       { passwordHash: adminHash, role: 'admin', email: ADMIN_USER.email },

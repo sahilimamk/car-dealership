@@ -1,5 +1,4 @@
 import request from 'supertest';
-import request from 'supertest';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import createApp from '../app';
 import { clearVehicles } from '../stores/vehicleStore';

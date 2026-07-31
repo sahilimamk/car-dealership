@@ -280,47 +280,67 @@ Base URL: `http://localhost:3001`
 
 ## Screenshots
 
-> Screenshots of the live application:
+> Live screenshots of the deployed application at [car-dealership-teal-seven.vercel.app](https://car-dealership-teal-seven.vercel.app)
 
-### Home / Inventory Dashboard
+### Inventory Dashboard (Guest View)
 
-![Inventory Dashboard](./screenshots/inventory-dashboard.png)
+![Inventory Dashboard](./screenshots/01-inventory-dashboard.png)
 
-The main inventory view showing vehicle cards with make, model, year, price, quantity, and action buttons (Purchase, Edit, Delete).
+The main inventory page showing all available vehicles with search, filters, and purchase buttons.
+
+### Inventory Overview Stats Banner + Admin Dashboard
+
+![Admin Dashboard](./screenshots/04-admin-dashboard.png)
+
+Stats banner showing total listings, vehicles sold, stock value, and categories — visible below the navbar. Admin users also see Add / Edit / Delete controls.
+
+### Stats Banner Close-up
+
+![Stats Banner](./screenshots/05-stats-banner.png)
+
+Live snapshot of dealership inventory metrics: total listings, units sold, total stock value, and vehicle categories.
+
+### Vehicle Cards Grid
+
+![Vehicle Cards](./screenshots/06-vehicle-cards.png)
+
+Each card displays make, model, year, price, key specs, and a Purchase button (disabled when out of stock).
 
 ### Filter Sidebar
 
-![Filter Sidebar](./screenshots/filter-sidebar.png)
+![Filter Sidebar](./screenshots/07-filter-sidebar.png)
 
-Left-side filter panel allowing users to refine inventory by brand, category, price range, fuel type, transmission, and year.
+Left-side filter panel — filter by brand, category, price range, fuel type, transmission, and year.
 
-### Add / Edit Vehicle Modal
+### Search in Action
 
-![Vehicle Form Modal](./screenshots/vehicle-form-modal.png)
+![Search](./screenshots/08-search.png)
 
-Admin modal form for creating or editing a vehicle listing. Validates all fields before submission.
+Navbar search bar wired to the inventory grid — results update live with 300ms debounce.
+
+### Add Vehicle Modal (Admin)
+
+![Add Vehicle Modal](./screenshots/09-add-vehicle-modal.png)
+
+Admin-only modal form for creating a new vehicle listing with full Zod-backed validation.
 
 ### Login Page
 
-![Login Page](./screenshots/login-page.png)
+![Login Page](./screenshots/02-login-page.png)
 
-Login page with admin demo credentials displayed. Supports both login and registration flows.
+Login page with admin demo credentials shown for easy testing.
 
 ### Register Page
 
-![Register Page](./screenshots/register-page.png)
+![Register Page](./screenshots/03-register-page.png)
 
-New user registration form with username, email, and password fields.
+New user registration with username, email, password, and confirmation fields.
 
 ### About Page
 
-![About Page](./screenshots/about-page.png)
+![About Page](./screenshots/10-about-page.png)
 
 Dealership information page.
-
----
-
-> **Note:** To add real screenshots, take them from your running app and place them in a `/screenshots` folder at the project root. Update the image paths above accordingly. If hosting on GitHub, you can also drag-drop images directly into the README editor to get hosted URLs.
 
 ---
 
@@ -335,18 +355,17 @@ cd backend
 npm test
 ```
 
-### Test Results — 25/25 Passed ✅
+### Test Results — 28/28 Passed ✅
 
 ```
  RUN  v1.6.1  car-dealership/backend
 
- ✓ src/__tests__/api.test.ts (15 tests) — 491ms
- ✓ src/__tests__/features.test.ts (10 tests) — 686ms
+ ✓ src/__tests__/api.test.ts (18 tests) — 492ms
+ ✓ src/__tests__/features.test.ts (10 tests) — 653ms
 
  Test Files  2 passed (2)
-      Tests  25 passed (25)
-   Start at  08:02:54
-   Duration  4.01s
+      Tests  28 passed (28)
+   Duration  3.41s
 ```
 
 ---
@@ -360,55 +379,58 @@ npm test
 | 3 | `POST /api/auth/login` — should authenticate valid user and return JWT | ✅ Pass |
 | 4 | `POST /api/auth/login` — should reject invalid password with 401 | ✅ Pass |
 
-### `api.test.ts` — Vehicle Endpoints (RED)
+### `api.test.ts` — Vehicle Endpoints
 
 | # | Test | Status |
 |---|------|--------|
 | 5  | `OPTIONS /api/vehicles` — should return valid CORS headers for preflight requests | ✅ Pass |
-| 6  | `POST /api/vehicles` — should allow unauthenticated visitors to create a vehicle record | ✅ Pass |
-| 7  | `POST /api/vehicles/:id/purchase` — should allow unauthenticated visitors to purchase a vehicle | ✅ Pass |
-| 8  | `GET /api/vehicles` — should allow unauthenticated visitors to browse inventory | ✅ Pass |
+| 6  | `GET /api/vehicles` — should allow unauthenticated visitors to browse inventory | ✅ Pass |
+| 7  | `POST /api/vehicles` — should reject unauthenticated requests with 401 | ✅ Pass |
+| 8  | `POST /api/vehicles` — should create a vehicle record for authenticated users | ✅ Pass |
 | 9  | `POST /api/vehicles` — should create a vehicle record for admin users | ✅ Pass |
 | 10 | `POST /api/vehicles` — should reject invalid payloads with Zod validation details | ✅ Pass |
 | 11 | `GET /api/vehicles/search` — should filter vehicles by category and price range | ✅ Pass |
-| 12 | `PUT /api/vehicles/:id` — should update a vehicle record | ✅ Pass |
-| 13 | `DELETE /api/vehicles/:id` — should allow deleting a vehicle without admin checks | ✅ Pass |
-| 14 | `POST /api/vehicles/:id/purchase` — should decrease quantity by one | ✅ Pass |
-| 15 | `POST /api/vehicles/:id/restock` — should allow increasing quantity | ✅ Pass |
+| 12 | `PUT /api/vehicles/:id` — should update a vehicle record when authenticated | ✅ Pass |
+| 13 | `DELETE /api/vehicles/:id` — should reject non-admin users with 403 | ✅ Pass |
+| 14 | `DELETE /api/vehicles/:id` — should allow admin to delete a vehicle | ✅ Pass |
+| 15 | `POST /api/vehicles/:id/purchase` — should reject unauthenticated requests with 401 | ✅ Pass |
+| 16 | `POST /api/vehicles/:id/purchase` — should decrease quantity by one when authenticated | ✅ Pass |
+| 17 | `POST /api/vehicles/:id/restock` — should reject non-admin users with 403 | ✅ Pass |
+| 18 | `POST /api/vehicles/:id/restock` — should allow admin to restock | ✅ Pass |
 
 ### `features.test.ts` — Auto-seed on Startup (TDD)
 
 | # | Test | Status |
 |---|------|--------|
-| 16 | Admin user should exist and be loginnable at cold start | ✅ Pass |
-| 17 | `GET /api/vehicles` should return seeded vehicles after startup | ✅ Pass |
+| 19 | Admin user should exist and be loginnable at cold start | ✅ Pass |
+| 20 | `GET /api/vehicles` should return seeded vehicles after startup | ✅ Pass |
 
 ### `features.test.ts` — Purchase Flow (TDD)
 
 | # | Test | Status |
 |---|------|--------|
-| 18 | `POST /api/vehicles/:id/purchase` — should decrement quantity from 1 to 0 | ✅ Pass |
-| 19 | `POST /api/vehicles/:id/purchase` — should fail with 400 when quantity is 0 | ✅ Pass |
+| 21 | `POST /api/vehicles/:id/purchase` — should decrement quantity from 1 to 0 | ✅ Pass |
+| 22 | `POST /api/vehicles/:id/purchase` — should fail with 400 when quantity is 0 | ✅ Pass |
 
 ### `features.test.ts` — Admin Inventory View (TDD)
 
 | # | Test | Status |
 |---|------|--------|
-| 20 | `GET /api/vehicles` — regular user should NOT see out-of-stock vehicles | ✅ Pass |
-| 21 | `GET /api/vehicles/admin` — admin should see ALL vehicles including out-of-stock | ✅ Pass |
-| 22 | `GET /api/vehicles/admin` — should allow regular users to view the admin inventory endpoint | ✅ Pass |
+| 23 | `GET /api/vehicles` — regular user should NOT see out-of-stock vehicles | ✅ Pass |
+| 24 | `GET /api/vehicles/admin` — admin should see ALL vehicles including out-of-stock | ✅ Pass |
+| 25 | `GET /api/vehicles/admin` — should allow regular users to view the admin inventory endpoint | ✅ Pass |
 
 ### `features.test.ts` — Restock Flow (TDD)
 
 | # | Test | Status |
 |---|------|--------|
-| 23 | `POST /api/vehicles/:id/restock` — should allow admin to restock an out-of-stock vehicle | ✅ Pass |
-| 24 | `POST /api/vehicles/:id/restock` — should allow regular users to restock vehicles | ✅ Pass |
-| 25 | `POST /api/vehicles/:id/restock` — should return 400 for invalid amount (0 or negative) | ✅ Pass |
+| 26 | `POST /api/vehicles/:id/restock` — should allow admin to restock an out-of-stock vehicle | ✅ Pass |
+| 27 | `POST /api/vehicles/:id/restock` — should reject regular users with 403 | ✅ Pass |
+| 28 | `POST /api/vehicles/:id/restock` — should return 400 for invalid amount (0 or negative) | ✅ Pass |
 
 ---
 
-**Summary: 25 tests, 25 passed, 0 failed, 0 skipped**
+**Summary: 28 tests, 28 passed, 0 failed, 0 skipped**
 
 ---
 

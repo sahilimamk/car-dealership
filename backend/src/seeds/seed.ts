@@ -10,6 +10,7 @@ import bcrypt from 'bcryptjs';
 import { findUserByUsername, createUser } from '../stores/userStore';
 import { listVehicles, createVehicle } from '../stores/vehicleStore';
 import { UserModel } from '../models/user';
+import { VehicleModel } from '../models/vehicle';
 
 // ---------------------------------------------------------------------------
 // Demo users
@@ -271,16 +272,35 @@ export async function seed(): Promise<void> {
   }
 
   // ── Vehicles ───────────────────────────────────────────────────────────
-  // Check whether any vehicles exist already. If the collection is non-empty
-  // we treat the seed as already applied and skip all inserts to stay idempotent.
   const existing = await listVehicles();
-  if (existing.length > 0) {
-    console.log(`[seed] ${existing.length} vehicle(s) already present — skipping vehicle seed.`);
-  } else {
+  if (existing.length === 0) {
     for (const vehicle of VEHICLE_DATA) {
       await createVehicle(vehicle);
     }
     console.log(`[seed] ${VEHICLE_DATA.length} vehicles inserted.`);
+  } else {
+    // Always repair prices — fixes any vehicles that got wrong data from
+    // a partial seed run (e.g. numeric separators lost, race condition, etc.)
+    let repaired = 0;
+    for (const seedVehicle of VEHICLE_DATA) {
+      const live = existing.find(
+        (v) => v.make === seedVehicle.make && v.model === seedVehicle.model
+      );
+      if (live && live.price !== seedVehicle.price) {
+        await VehicleModel.findOneAndUpdate(
+          { make: seedVehicle.make, model: seedVehicle.model },
+          { price: seedVehicle.price },
+          { new: true }
+        );
+        console.log(`[seed] Repaired price for ${seedVehicle.make} ${seedVehicle.model}: ${live.price} → ${seedVehicle.price}`);
+        repaired++;
+      }
+    }
+    if (repaired === 0) {
+      console.log(`[seed] ${existing.length} vehicle(s) already present — all prices correct.`);
+    } else {
+      console.log(`[seed] Repaired ${repaired} vehicle price(s).`);
+    }
   }
 
   console.log('[seed] Seed complete.');

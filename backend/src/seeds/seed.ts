@@ -233,18 +233,27 @@ export async function seed(): Promise<void> {
   console.log('[seed] Starting database seed...');
 
   // ── Users ──────────────────────────────────────────────────────────────
+  // Always upsert the admin so the password is always correct even if
+  // the record was previously created with a wrong/stale hash.
+  const adminHash = await bcrypt.hash(ADMIN_USER.password, 10);
   const existingAdmin = await findUserByUsername(ADMIN_USER.username);
   if (!existingAdmin) {
-    const passwordHash = await bcrypt.hash(ADMIN_USER.password, 10);
     await createUser({
       username: ADMIN_USER.username,
       email: ADMIN_USER.email,
-      passwordHash,
+      passwordHash: adminHash,
       role: ADMIN_USER.role,
     });
     console.log(`[seed] Admin user '${ADMIN_USER.username}' created.`);
   } else {
-    console.log(`[seed] Admin user '${ADMIN_USER.username}' already exists — skipping.`);
+    // Force-update password hash so deployment changes never break login
+    const { UserModel } = await import('../models/user');
+    await UserModel.findOneAndUpdate(
+      { username: ADMIN_USER.username },
+      { passwordHash: adminHash, role: 'admin', email: ADMIN_USER.email },
+      { new: true }
+    );
+    console.log(`[seed] Admin user '${ADMIN_USER.username}' password refreshed.`);
   }
 
   const existingDemo = await findUserByUsername(DEMO_USER.username);

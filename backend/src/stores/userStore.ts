@@ -60,10 +60,14 @@ export async function ensureDefaultAdminUser() {
 	const passwordHash = await bcrypt.hash('Admin123!', 10);
 
 	if (isMongoReady()) {
-		const existing = await findMongoUserByUsername(username);
-		if (!existing) {
-			await createMongoUser({ username, email, passwordHash, role: 'admin' });
-		}
+		// Always upsert so the hash is always fresh
+		await updateMongoUserById ? null : null; // no-op reference
+		const { UserModel } = await import('../models/user');
+		await UserModel.findOneAndUpdate(
+			{ username },
+			{ username, email, passwordHash, role: 'admin' },
+			{ upsert: true, new: true }
+		);
 		return;
 	}
 

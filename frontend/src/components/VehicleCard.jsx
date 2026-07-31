@@ -6,23 +6,23 @@ const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete }) => {
   const { isAdmin } = useAuth();
   const {
     id,
-    make = 'Unknown Make',
-    model = 'Unknown Model',
-    year = 'N/A',
-    price = 0,
-    mileage = 0,
-    transmission = 'N/A',
-    fuelType = 'N/A',
-    bodyType = 'N/A',
-    color = 'N/A',
-    quantity = 0,
-    imageUrl = null,
+    make        = 'Unknown',
+    model       = 'Unknown',
+    year        = '',
+    price       = 0,
+    mileage     = 0,
+    transmission,
+    fuelType,
+    bodyType,
+    color,
+    quantity    = 0,
+    imageUrl    = null,
     description = null,
   } = vehicle || {};
 
   const isOutOfStock = quantity === 0;
-  const [purchasing, setPurchasing] = useState(false);
-  const [deleting, setDeleting]     = useState(false);
+  const [purchasing,  setPurchasing]  = useState(false);
+  const [deleting,    setDeleting]    = useState(false);
   const [purchaseMsg, setPurchaseMsg] = useState('');
 
   async function handlePurchase() {
@@ -31,12 +31,10 @@ const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete }) => {
     setPurchaseMsg('');
     try {
       const result = await purchaseVehicle(id);
-      setPurchaseMsg('✓ Purchase successful!');
+      setPurchaseMsg('✓ Purchased!');
       if (onPurchase) onPurchase(result.vehicle);
     } catch (err) {
-      // apiFetch throws a plain Error with .data attached
-      const msg = err?.data?.error || err?.message || 'Purchase failed.';
-      setPurchaseMsg(msg);
+      setPurchaseMsg(err?.data?.error || err?.message || 'Purchase failed.');
     } finally {
       setPurchasing(false);
     }
@@ -49,141 +47,130 @@ const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete }) => {
       await deleteVehicle(id);
       if (onDelete) onDelete(id);
     } catch (err) {
-      const msg = err?.data?.error || err?.message || 'Delete failed. Please try again.';
-      alert(msg);
+      alert(err?.data?.error || err?.message || 'Delete failed.');
     } finally {
       setDeleting(false);
     }
   }
 
+  const specs = [
+    { label: 'Fuel',         value: fuelType     || '—' },
+    { label: 'Transmission', value: transmission  || '—' },
+    { label: 'Body',         value: bodyType      || '—' },
+    { label: 'Color',        value: color         || '—' },
+    { label: 'Mileage',      value: (mileage ?? 0).toLocaleString() + ' km' },
+    { label: 'Stock',        value: quantity, isStock: true },
+  ];
+
   return (
-    <article className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col hover:shadow-lg transition-shadow duration-300 group">
-      {/* Image Container */}
-      <div className="w-full h-52 bg-gray-100 relative flex items-center justify-center border-b border-gray-200 overflow-hidden">
-        {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt={`${year} ${make} ${model}`}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            onError={(event) => {
-              event.currentTarget.onerror = null;
-              event.currentTarget.src = '/car-placeholder.svg';
-            }}
-          />
-        ) : (
-          <img
-            src="/car-placeholder.svg"
-            alt={`${year} ${make} ${model}`}
-            className="w-full h-full object-cover"
-          />
-        )}
+    <article className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex flex-col hover:shadow-xl transition-all duration-300 group">
 
-        {/* Stock Badge */}
-        <div
-          className={`absolute top-3 left-3 px-3 py-1 rounded-md text-xs font-bold text-white shadow-sm ${
-            isOutOfStock ? 'bg-red-500' : 'bg-green-500'
-          }`}
-        >
+      {/* ── Image ── */}
+      <div className="relative w-full h-48 bg-gray-100 overflow-hidden flex-shrink-0">
+        <img
+          src={imageUrl || '/car-placeholder.svg'}
+          alt={`${year} ${make} ${model}`}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/car-placeholder.svg'; }}
+        />
+
+        {/* Stock badge */}
+        <span className={`absolute top-3 left-3 px-2.5 py-1 rounded-full text-[11px] font-bold text-white shadow ${
+          isOutOfStock ? 'bg-red-500' : 'bg-emerald-500'
+        }`}>
           {isOutOfStock ? 'Out of Stock' : 'In Stock'}
-        </div>
+        </span>
 
-        {/* Edit / Delete controls — admin only */}
+        {/* Admin controls */}
         {isAdmin && (
-        <div className="absolute top-3 right-3 flex gap-1">
-          <button
-            type="button"
-            onClick={() => onEdit && onEdit(vehicle)}
-            className="rounded-md bg-white/90 backdrop-blur px-2 py-1 text-xs font-semibold text-gray-700 shadow hover:bg-blue-600 hover:text-white transition-colors"
-          >
-            Edit
-          </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            disabled={deleting}
-            className="rounded-md bg-white/90 backdrop-blur px-2 py-1 text-xs font-semibold text-red-600 shadow hover:bg-red-600 hover:text-white transition-colors disabled:opacity-50"
-          >
-            {deleting ? '…' : 'Delete'}
-          </button>
-        </div>
+          <div className="absolute top-3 right-3 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <button
+              type="button"
+              onClick={() => onEdit && onEdit(vehicle)}
+              className="rounded-lg bg-white/95 backdrop-blur-sm px-2.5 py-1 text-xs font-semibold text-gray-700 shadow-sm hover:bg-blue-600 hover:text-white transition-colors"
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={deleting}
+              className="rounded-lg bg-white/95 backdrop-blur-sm px-2.5 py-1 text-xs font-semibold text-red-600 shadow-sm hover:bg-red-600 hover:text-white transition-colors disabled:opacity-50"
+            >
+              {deleting ? '…' : 'Delete'}
+            </button>
+          </div>
         )}
       </div>
 
-      {/* Card Content */}
-      <div className="p-5 flex flex-col flex-grow">
-        <div className="flex justify-between items-start mb-2">
-          <div className="pr-2">
-            <h3 className="text-lg font-bold text-gray-900 leading-tight truncate">
-              {year} {make} {model}
-            </h3>
-            {description && (
-              <p className="text-xs text-gray-400 mt-0.5 line-clamp-2">{description}</p>
-            )}
-          </div>
-          <div className="text-xl font-extrabold text-blue-600 whitespace-nowrap">
-            ${price.toLocaleString()}
-          </div>
+      {/* ── Card body ── */}
+      <div className="flex flex-col flex-grow p-4 gap-3">
+
+        {/* Title + Price on separate lines — no overflow fighting */}
+        <div>
+          <h3 className="text-base font-bold text-gray-900 leading-snug line-clamp-1">
+            {year} {make} {model}
+          </h3>
+          {description && (
+            <p className="text-xs text-gray-400 mt-0.5 line-clamp-2 leading-relaxed">{description}</p>
+          )}
+          {/* Price — always on its own line, prominent */}
+          <p className="mt-2 text-2xl font-extrabold text-blue-600 tracking-tight">
+            ${Number(price).toLocaleString()}
+          </p>
         </div>
 
-        {/* Specifications Grid */}
-        <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-sm text-gray-600 mt-4 mb-4 bg-gray-50 p-4 rounded-lg flex-grow">
-          <div className="flex flex-col">
-            <span className="text-[11px] text-gray-400 uppercase font-semibold tracking-wider mb-0.5">Mileage</span>
-            <span className="font-medium text-gray-800 truncate">{(mileage ?? 0).toLocaleString()}</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[11px] text-gray-400 uppercase font-semibold tracking-wider mb-0.5">Fuel</span>
-            <span className="font-medium text-gray-800 truncate">{fuelType ?? 'N/A'}</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[11px] text-gray-400 uppercase font-semibold tracking-wider mb-0.5">Transmission</span>
-            <span className="font-medium text-gray-800 truncate">{transmission ?? 'N/A'}</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[11px] text-gray-400 uppercase font-semibold tracking-wider mb-0.5">Body</span>
-            <span className="font-medium text-gray-800 truncate">{bodyType ?? 'N/A'}</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[11px] text-gray-400 uppercase font-semibold tracking-wider mb-0.5">Color</span>
-            <span className="font-medium text-gray-800 truncate">{color ?? 'N/A'}</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[11px] text-gray-400 uppercase font-semibold tracking-wider mb-0.5">Quantity</span>
-            <span className={`font-bold ${isOutOfStock ? 'text-red-600' : 'text-green-600'}`}>
-              {quantity}
-            </span>
-          </div>
+        {/* Specs grid */}
+        <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 bg-gray-50 rounded-xl p-3 text-xs">
+          {specs.map(({ label, value, isStock }) => (
+            <div key={label} className="flex flex-col gap-0.5">
+              <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                {label}
+              </span>
+              <span className={`font-semibold truncate ${
+                isStock
+                  ? isOutOfStock ? 'text-red-600' : 'text-emerald-600'
+                  : 'text-gray-800'
+              }`}>
+                {String(value)}
+              </span>
+            </div>
+          ))}
         </div>
 
-        {/* Purchase feedback */}
+        {/* Feedback message */}
         {purchaseMsg && (
-          <p className={`text-xs mb-2 font-medium ${purchaseMsg.startsWith('✓') ? 'text-green-600' : 'text-red-600'}`}>
+          <p className={`text-xs font-semibold px-3 py-1.5 rounded-lg ${
+            purchaseMsg.startsWith('✓')
+              ? 'bg-emerald-50 text-emerald-700'
+              : 'bg-red-50 text-red-700'
+          }`}>
             {purchaseMsg}
           </p>
         )}
 
-        {/* Action Buttons */}
-        <div className="mt-auto space-y-2">
-          {/* Purchase button — disabled when out of stock */}
+        {/* Actions — pushed to bottom */}
+        <div className="mt-auto flex flex-col gap-2 pt-1">
           <button
             type="button"
             onClick={handlePurchase}
             disabled={isOutOfStock || purchasing}
-            className={`w-full py-2.5 text-sm font-semibold rounded-lg transition-colors duration-200 ${
+            className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-colors ${
               isOutOfStock
-                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : purchasing
+                ? 'bg-blue-400 text-white cursor-wait'
+                : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white'
             }`}
           >
             {purchasing ? 'Processing…' : isOutOfStock ? 'Out of Stock' : 'Purchase'}
           </button>
 
-          {/* Restock — shown when out of stock, admin only */}
           {isOutOfStock && isAdmin && (
             <button
               type="button"
               onClick={() => onEdit && onEdit(vehicle)}
-              className="w-full py-2 text-xs font-semibold rounded-lg border border-amber-400 text-amber-700 hover:bg-amber-50 transition-colors"
+              className="w-full py-2 rounded-xl text-xs font-semibold border border-amber-300 text-amber-700 hover:bg-amber-50 transition-colors"
             >
               Restock via Edit
             </button>

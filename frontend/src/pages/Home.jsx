@@ -32,6 +32,7 @@ const SORT_OPTIONS = [
 ];
 
 const DEBOUNCE_MS = 300;
+const PAGE_SIZE = 9;
 
 // ── Stat card ─────────────────────────────────────────────────────────────────
 
@@ -70,6 +71,9 @@ export default function Home() {
   // Modal state
   const [showAddModal,    setShowAddModal]    = useState(false);
   const [editingVehicle,  setEditingVehicle]  = useState(null);
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Track purchases for "vehicles sold" counter (session only)
   const [soldCount, setSoldCount] = useState(0);
@@ -133,6 +137,7 @@ export default function Home() {
   // ── Navbar search handler — updates filter state ──────────────────────────
   function handleNavbarSearch(value) {
     setSearchInput(value);
+    setCurrentPage(1);
     setFilters((prev) => ({ ...prev, searchQuery: value }));
   }
 
@@ -170,6 +175,11 @@ export default function Home() {
       default:           return list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
   }, [filteredVehicles, sortBy]);
+
+  // ── Pagination ────────────────────────────────────────────────────────────
+  const totalPages  = Math.max(1, Math.ceil(sortedVehicles.length / PAGE_SIZE));
+  const safePage    = Math.min(currentPage, totalPages);
+  const pagedVehicles = sortedVehicles.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
@@ -265,7 +275,7 @@ export default function Home() {
       {/* ── Main content ── */}
       <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          <FilterSidebar onFilterChange={setFilters} />
+          <FilterSidebar onFilterChange={(f) => { setFilters(f); setCurrentPage(1); }} />
 
           <div className="w-full lg:flex-1 min-w-0">
 
@@ -273,7 +283,15 @@ export default function Home() {
             <div className="mb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 {loading ? 'Loading…' : error ? '' : (
-                  <>Showing <span className="font-semibold text-gray-900 dark:text-white">{sortedVehicles.length}</span> vehicle{sortedVehicles.length !== 1 ? 's' : ''}</>
+                  <>
+                    Showing{' '}
+                    <span className="font-semibold text-gray-900 dark:text-white">
+                      {sortedVehicles.length === 0 ? 0 : (safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, sortedVehicles.length)}
+                    </span>
+                    {' '}of{' '}
+                    <span className="font-semibold text-gray-900 dark:text-white">{sortedVehicles.length}</span>
+                    {' '}vehicle{sortedVehicles.length !== 1 ? 's' : ''}
+                  </>
                 )}
               </p>
               <div className="flex items-center gap-2">
@@ -281,7 +299,7 @@ export default function Home() {
                 <select
                   id="sort-select"
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
+                  onChange={(e) => { setSortBy(e.target.value); setCurrentPage(1); }}
                   className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                 >
                   {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
@@ -322,17 +340,86 @@ export default function Home() {
                     <p className="mt-1 text-sm">Try adjusting your search or filters.</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                    {sortedVehicles.map((vehicle) => (
-                      <VehicleCard
-                        key={vehicle.id}
-                        vehicle={vehicle}
-                        onPurchase={handleVehiclePurchased}
-                        onEdit={(v) => setEditingVehicle(v)}
-                        onDelete={handleVehicleDeleted}
-                      />
-                    ))}
-                  </div>
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                      {pagedVehicles.map((vehicle) => (
+                        <VehicleCard
+                          key={vehicle.id}
+                          vehicle={vehicle}
+                          onPurchase={handleVehiclePurchased}
+                          onEdit={(v) => setEditingVehicle(v)}
+                          onDelete={handleVehicleDeleted}
+                        />
+                      ))}
+                    </div>
+
+                    {/* ── Pagination controls ── */}
+                    {totalPages > 1 && (
+                      <div className="mt-8 flex items-center justify-center gap-2 flex-wrap">
+                        {/* Prev */}
+                        <button
+                          type="button"
+                          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                          disabled={safePage === 1}
+                          className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                          </svg>
+                          Prev
+                        </button>
+
+                        {/* Page numbers */}
+                        {Array.from({ length: totalPages }, (_, i) => i + 1)
+                          .filter((page) => {
+                            // Always show first, last, current and neighbours
+                            return page === 1 || page === totalPages || Math.abs(page - safePage) <= 1;
+                          })
+                          .reduce((acc, page, idx, arr) => {
+                            // Insert ellipsis where pages are skipped
+                            if (idx > 0 && page - arr[idx - 1] > 1) {
+                              acc.push('…');
+                            }
+                            acc.push(page);
+                            return acc;
+                          }, [])
+                          .map((item, idx) =>
+                            item === '…' ? (
+                              <span key={`ellipsis-${idx}`} className="px-2 text-gray-400 dark:text-gray-500 text-sm select-none">
+                                …
+                              </span>
+                            ) : (
+                              <button
+                                key={item}
+                                type="button"
+                                onClick={() => setCurrentPage(item)}
+                                className={`w-9 h-9 rounded-lg text-sm font-semibold transition-colors ${
+                                  item === safePage
+                                    ? 'bg-blue-600 text-white shadow-sm'
+                                    : 'border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
+                                }`}
+                              >
+                                {item}
+                              </button>
+                            )
+                          )
+                        }
+
+                        {/* Next */}
+                        <button
+                          type="button"
+                          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                          disabled={safePage === totalPages}
+                          className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                        >
+                          Next
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                          </svg>
+                        </button>
+                      </div>
+                    )}
+                  </>
                 )
             )}
           </div>

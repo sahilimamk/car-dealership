@@ -44,21 +44,21 @@ async function authFetch(path, body) {
     body: JSON.stringify(body),
   });
 
-  let data = null;
+  let responseData;
   try {
-    data = await response.json();
+    responseData = await response.json();
   } catch {
-    data = null;
+    responseData = null;
   }
 
   if (!response.ok) {
-    const err = new Error(data?.error ?? `HTTP ${response.status}`);
+    const err = new Error(responseData?.error ?? `HTTP ${response.status}`);
     err.status = response.status;
-    err.data = data;
+    err.data = responseData;
     throw err;
   }
 
-  return data;
+  return responseData;
 }
 
 function loadFromStorage() {

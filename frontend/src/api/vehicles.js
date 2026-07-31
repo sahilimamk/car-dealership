@@ -127,7 +127,7 @@ async function apiFetch(path, options = {}) {
     },
   });
 
-  let body = null;
+  let body;
   const ct = response.headers.get('content-type') ?? '';
   if (ct.includes('application/json')) {
     body = await response.json();

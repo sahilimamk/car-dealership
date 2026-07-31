@@ -63,10 +63,10 @@ const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete }) => {
   ];
 
   return (
-    <article className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex flex-col hover:shadow-xl transition-all duration-300 group">
+    <article className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col hover:shadow-xl transition-all duration-300 group">
 
       {/* ── Image ── */}
-      <div className="relative w-full h-48 bg-gray-100 overflow-hidden flex-shrink-0">
+      <div className="relative w-full h-48 bg-gray-100 dark:bg-gray-700 overflow-hidden flex-shrink-0">
         <img
           src={imageUrl || '/car-placeholder.svg'}
           alt={`${year} ${make} ${model}`}
@@ -108,11 +108,11 @@ const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete }) => {
 
         {/* Title + Price on separate lines — no overflow fighting */}
         <div>
-          <h3 className="text-base font-bold text-gray-900 leading-snug line-clamp-1">
+          <h3 className="text-base font-bold text-gray-900 dark:text-white leading-snug line-clamp-1">
             {year} {make} {model}
           </h3>
           {description && (
-            <p className="text-xs text-gray-400 mt-0.5 line-clamp-2 leading-relaxed">{description}</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 line-clamp-2 leading-relaxed">{description}</p>
           )}
           {/* Price — always on its own line, prominent */}
           <p className="mt-2 text-2xl font-extrabold text-blue-600 tracking-tight">
@@ -121,16 +121,16 @@ const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete }) => {
         </div>
 
         {/* Specs grid */}
-        <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 bg-gray-50 rounded-xl p-3 text-xs">
+        <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3 text-xs">
           {specs.map(({ label, value, isStock }) => (
             <div key={label} className="flex flex-col gap-0.5">
-              <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
                 {label}
               </span>
               <span className={`font-semibold truncate ${
                 isStock
                   ? isOutOfStock ? 'text-red-600' : 'text-emerald-600'
-                  : 'text-gray-800'
+                  : 'text-gray-800 dark:text-gray-200'
               }`}>
                 {String(value)}
               </span>

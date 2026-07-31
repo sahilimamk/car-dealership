@@ -21,7 +21,7 @@ import { useAuth } from '../context/AuthContext';
 function Field({ id, label, type = 'text', autoComplete, placeholder, value, error, onChange }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+      <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
         {label}
       </label>
       <input
@@ -129,18 +129,18 @@ export default function Register() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-950 px-4 py-12">
       <div className="w-full max-w-md">
 
         {/* ── Card ── */}
-        <div className="rounded-2xl bg-white p-8 shadow-md border border-gray-100">
+        <div className="rounded-2xl bg-white dark:bg-gray-900 p-8 shadow-md border border-gray-100 dark:border-gray-700">
 
           {/* Header */}
           <div className="mb-8 text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 font-bold text-white text-lg">
               AV
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">Create an account</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Create an account</h1>
             <p className="mt-1 text-sm text-gray-500">Join AutoVault today</p>
           </div>
 
@@ -217,7 +217,7 @@ export default function Register() {
           </form>
 
           {/* Footer */}
-          <p className="mt-6 text-center text-sm text-gray-500">
+          <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
             Already have an account?{' '}
             <Link to="/login" className="font-medium text-blue-600 hover:underline">
               Sign in

@@ -37,14 +37,14 @@ const DEBOUNCE_MS = 300;
 
 function StatCard({ icon, label, value, sub, color }) {
   return (
-    <div className={`flex items-center gap-4 rounded-2xl bg-white border border-gray-100 shadow-sm px-5 py-4 flex-1 min-w-0`}>
+    <div className="flex items-center gap-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm px-5 py-4 flex-1 min-w-0">
       <div className={`flex-shrink-0 flex items-center justify-center w-11 h-11 rounded-xl ${color}`}>
         {icon}
       </div>
       <div className="min-w-0">
-        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 truncate">{label}</p>
-        <p className="text-2xl font-extrabold text-gray-900 leading-tight">{value}</p>
-        {sub && <p className="text-xs text-gray-500 mt-0.5">{sub}</p>}
+        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 truncate">{label}</p>
+        <p className="text-2xl font-extrabold text-gray-900 dark:text-white leading-tight">{value}</p>
+        {sub && <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{sub}</p>}
       </div>
     </div>
   );
@@ -173,7 +173,7 @@ export default function Home() {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans flex flex-col">
 
       {/* Pass search state up to Navbar */}
       <Navbar searchValue={searchInput} onSearchChange={handleNavbarSearch} />
@@ -237,12 +237,12 @@ export default function Home() {
       </section>
 
       {/* ── Dashboard header ── */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
+      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Inventory Dashboard</h1>
-              <p className="text-gray-500 text-sm mt-0.5">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Inventory Dashboard</h1>
+              <p className="text-gray-500 dark:text-gray-400 text-sm mt-0.5">
                 Manage vehicle stock, track availability, and process purchases.
               </p>
             </div>
@@ -271,18 +271,18 @@ export default function Home() {
 
             {/* Toolbar */}
             <div className="mb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 {loading ? 'Loading…' : error ? '' : (
-                  <>Showing <span className="font-semibold text-gray-900">{sortedVehicles.length}</span> vehicle{sortedVehicles.length !== 1 ? 's' : ''}</>
+                  <>Showing <span className="font-semibold text-gray-900 dark:text-white">{sortedVehicles.length}</span> vehicle{sortedVehicles.length !== 1 ? 's' : ''}</>
                 )}
               </p>
               <div className="flex items-center gap-2">
-                <label htmlFor="sort-select" className="text-sm text-gray-500 whitespace-nowrap">Sort by:</label>
+                <label htmlFor="sort-select" className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">Sort by:</label>
                 <select
                   id="sort-select"
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                 >
                   {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
@@ -302,9 +302,9 @@ export default function Home() {
 
             {/* Error */}
             {!loading && error && (
-              <div className="rounded-xl border border-amber-200 bg-amber-50 p-6 text-center mb-6">
-                <p className="text-amber-800 font-medium text-sm">{error}</p>
-                <button type="button" onClick={() => setFilters({ ...initialFilters })} className="mt-3 text-sm text-blue-600 hover:underline">
+              <div className="rounded-xl border border-amber-200 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 p-6 text-center mb-6">
+                <p className="text-amber-800 dark:text-amber-300 font-medium text-sm">{error}</p>
+                <button type="button" onClick={() => setFilters({ ...initialFilters })} className="mt-3 text-sm text-blue-600 dark:text-blue-400 hover:underline">
                   Reset &amp; retry
                 </button>
               </div>
@@ -314,7 +314,7 @@ export default function Home() {
             {!loading && (
               sortedVehicles.length === 0
                 ? (
-                  <div className="mt-8 rounded-2xl border-2 border-dashed border-gray-200 bg-white p-16 text-center text-gray-400">
+                  <div className="mt-8 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-16 text-center text-gray-400 dark:text-gray-500">
                     <svg className="mx-auto mb-4 h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>

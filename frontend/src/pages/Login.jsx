@@ -72,18 +72,18 @@ export default function Login() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-950 px-4">
       <div className="w-full max-w-md">
 
         {/* ── Card ── */}
-        <div className="rounded-2xl bg-white p-8 shadow-md border border-gray-100">
+        <div className="rounded-2xl bg-white dark:bg-gray-900 p-8 shadow-md border border-gray-100 dark:border-gray-700">
 
           {/* Header */}
           <div className="mb-8 text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 font-bold text-white text-lg">
               AV
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Welcome back</h1>
             <p className="mt-1 text-sm text-gray-500">Sign in to AutoVault</p>
           </div>
 
@@ -107,7 +107,7 @@ export default function Login() {
             <div>
               <label
                 htmlFor="username"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
               >
                 Username
               </label>
@@ -134,7 +134,7 @@ export default function Login() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
               >
                 Password
               </label>
@@ -186,7 +186,7 @@ export default function Login() {
           </form>
 
           {/* Footer */}
-          <p className="mt-6 text-center text-sm text-gray-500">
+          <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
             Don&apos;t have an account?{' '}
             <Link
               to="/register"

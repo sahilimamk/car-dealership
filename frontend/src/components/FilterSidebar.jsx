@@ -94,73 +94,73 @@ function FilterSidebar({ onFilterChange } = {}) {
 
   return (
     <aside className="w-full lg:w-80 xl:w-96 flex-shrink-0">
-      <div className="sticky top-24 flex h-[calc(100vh-6rem)] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-        <div className="border-b border-gray-100 px-5 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
-          <p className="mt-1 text-sm text-gray-500">
+      <div className="sticky top-24 flex h-[calc(100vh-6rem)] flex-col overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="border-b border-gray-100 dark:border-gray-700 px-5 py-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Filters</h2>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             Refine inventory by search, price, brand, year, fuel, and transmission.
           </p>
         </div>
 
         <div className="flex-1 overflow-y-auto px-5 py-5">
           <div className="space-y-5">
-            <section className="rounded-xl bg-gray-50 p-4">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
+            <section className="rounded-xl bg-gray-50 dark:bg-gray-800 p-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300">
                 Search
               </h3>
               <div className="mt-4">
-                <label className="flex flex-col gap-2 text-sm font-medium text-gray-700">
+                <label className="flex flex-col gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   Search Vehicles
                   <input
                     type="text"
                     value={filters.searchQuery}
                     onChange={(event) => handleSearchChange(event.target.value)}
                     placeholder="Search make, model, year..."
-                    className="rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    className="rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-3 text-sm text-gray-900 dark:text-gray-100 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                   />
                 </label>
               </div>
             </section>
 
-            <section className="rounded-xl bg-gray-50 p-4">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
+            <section className="rounded-xl bg-gray-50 dark:bg-gray-800 p-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300">
                 Price Range
               </h3>
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-                <label className="flex flex-col gap-2 text-sm font-medium text-gray-700">
+                <label className="flex flex-col gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   Minimum Price
                   <input
                     type="number"
                     value={filters.minPrice}
                     onChange={(event) => handlePriceChange("minPrice", event.target.value)}
                     placeholder="₹0"
-                    className="rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    className="rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-3 text-sm text-gray-900 dark:text-gray-100 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                   />
                 </label>
 
-                <label className="flex flex-col gap-2 text-sm font-medium text-gray-700">
+                <label className="flex flex-col gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   Maximum Price
                   <input
                     type="number"
                     value={filters.maxPrice}
                     onChange={(event) => handlePriceChange("maxPrice", event.target.value)}
                     placeholder="₹50,00,000"
-                    className="rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    className="rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-3 text-sm text-gray-900 dark:text-gray-100 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                   />
                 </label>
               </div>
             </section>
 
             {/* ── Category ── */}
-            <section className="rounded-xl bg-gray-50 p-4">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
+            <section className="rounded-xl bg-gray-50 dark:bg-gray-800 p-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300">
                 Category
               </h3>
               <div className="mt-4 space-y-3">
                 {CATEGORY_OPTIONS.map((cat) => {
                   const radioId = `category-${cat.toLowerCase()}`;
                   return (
-                    <label key={cat} htmlFor={radioId} className="flex items-center gap-3 text-sm text-gray-700">
+                    <label key={cat} htmlFor={radioId} className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
                       <input
                         id={radioId}
                         type="radio"
@@ -176,8 +176,8 @@ function FilterSidebar({ onFilterChange } = {}) {
               </div>
             </section>
 
-            <section className="rounded-xl bg-gray-50 p-4">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
+            <section className="rounded-xl bg-gray-50 dark:bg-gray-800 p-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300">
                 Brand
               </h3>
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-1">
@@ -185,7 +185,7 @@ function FilterSidebar({ onFilterChange } = {}) {
                   const checkboxId = `brand-${brand.toLowerCase().replace(/\s+/g, "-")}`;
 
                   return (
-                    <label key={brand} htmlFor={checkboxId} className="flex items-center gap-3 text-sm text-gray-700">
+                    <label key={brand} htmlFor={checkboxId} className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
                       <input
                         id={checkboxId}
                         type="checkbox"
@@ -200,8 +200,8 @@ function FilterSidebar({ onFilterChange } = {}) {
               </div>
             </section>
 
-            <section className="rounded-xl bg-gray-50 p-4">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
+            <section className="rounded-xl bg-gray-50 dark:bg-gray-800 p-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300">
                 Year
               </h3>
               <div className="mt-4 space-y-3">
@@ -209,7 +209,7 @@ function FilterSidebar({ onFilterChange } = {}) {
                   const radioId = `year-${option.value}`;
 
                   return (
-                    <label key={option.value} htmlFor={radioId} className="flex items-center gap-3 text-sm text-gray-700">
+                    <label key={option.value} htmlFor={radioId} className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
                       <input
                         id={radioId}
                         type="radio"
@@ -225,8 +225,8 @@ function FilterSidebar({ onFilterChange } = {}) {
               </div>
             </section>
 
-            <section className="rounded-xl bg-gray-50 p-4">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
+            <section className="rounded-xl bg-gray-50 dark:bg-gray-800 p-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300">
                 Fuel Type
               </h3>
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-1">
@@ -234,7 +234,7 @@ function FilterSidebar({ onFilterChange } = {}) {
                   const checkboxId = `fuel-${fuelType.toLowerCase()}`;
 
                   return (
-                    <label key={fuelType} htmlFor={checkboxId} className="flex items-center gap-3 text-sm text-gray-700">
+                    <label key={fuelType} htmlFor={checkboxId} className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
                       <input
                         id={checkboxId}
                         type="checkbox"
@@ -249,8 +249,8 @@ function FilterSidebar({ onFilterChange } = {}) {
               </div>
             </section>
 
-            <section className="rounded-xl bg-gray-50 p-4">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
+            <section className="rounded-xl bg-gray-50 dark:bg-gray-800 p-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300">
                 Transmission
               </h3>
               <div className="mt-4 space-y-3">
@@ -258,7 +258,7 @@ function FilterSidebar({ onFilterChange } = {}) {
                   const radioId = `transmission-${transmission.toLowerCase()}`;
 
                   return (
-                    <label key={transmission} htmlFor={radioId} className="flex items-center gap-3 text-sm text-gray-700">
+                    <label key={transmission} htmlFor={radioId} className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
                       <input
                         id={radioId}
                         type="radio"

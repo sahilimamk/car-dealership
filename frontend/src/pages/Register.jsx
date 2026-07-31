@@ -119,7 +119,8 @@ export default function Register() {
       navigate('/login', { replace: true, state: { registered: true } });
     } catch (err) {
       const message =
-        err.response?.data?.error ||
+        err?.data?.error ||
+        err?.message ||
         'Something went wrong. Please try again.';
       setServerError(message);
     } finally {

@@ -18,13 +18,48 @@
  */
 
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import api from '../api/axios';
 
 // ── Context ──────────────────────────────────────────────────────────────────
 
 const AuthContext = createContext(null);
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
+
+function getApiBaseUrl() {
+  const configured = (import.meta.env.VITE_API_URL || '').trim().replace(/\/$/, '');
+  if (configured) return configured;
+  if (import.meta.env.DEV) return '/api';
+  return 'https://car-dealership-4ff1.onrender.com/api';
+}
+
+/**
+ * Thin fetch wrapper for auth endpoints.
+ * Throws a plain Error with .status and .data on non-2xx responses.
+ */
+async function authFetch(path, body) {
+  const url = `${getApiBaseUrl()}${path}`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  let data = null;
+  try {
+    data = await response.json();
+  } catch {
+    data = null;
+  }
+
+  if (!response.ok) {
+    const err = new Error(data?.error ?? `HTTP ${response.status}`);
+    err.status = response.status;
+    err.data = data;
+    throw err;
+  }
+
+  return data;
+}
 
 function loadFromStorage() {
   try {
@@ -54,27 +89,35 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(stored.token);
   const [user,  setUser]  = useState(stored.user);
 
-  // Login — calls POST /api/auth/login, persists token + user
+  /**
+   * Login — calls POST /api/auth/login.
+   * On success: persists token + user and updates state.
+   * Throws on bad credentials or network error.
+   */
   const login = useCallback(async (username, password) => {
-    const { data } = await api.post('/auth/login', { username, password });
+    const data = await authFetch('/auth/login', { username, password });
     persistToStorage(data.token, data.user);
     setToken(data.token);
     setUser(data.user);
     return data;
   }, []);
 
-  // Register — calls POST /api/auth/register, does NOT auto-login
+  /**
+   * Register — calls POST /api/auth/register.
+   * Does NOT auto-login; the caller decides whether to redirect to /login.
+   * Throws on validation errors or duplicate username.
+   */
   const register = useCallback(async (username, email, password) => {
-    const { data } = await api.post('/auth/register', { username, email, password });
+    const data = await authFetch('/auth/register', { username, email, password });
     return data;
   }, []);
 
-  // Logout — wipes state and storage, redirects to login
+  /** Logout — wipes state and storage. */
   const logout = useCallback(() => {
     clearStorage();
     setToken(null);
     setUser(null);
-    window.location.href = '/';
+    window.location.href = '/login';
   }, []);
 
   const value = useMemo(

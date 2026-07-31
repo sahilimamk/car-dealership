@@ -32,7 +32,9 @@ const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete }) => {
       setPurchaseMsg('✓ Purchase successful!');
       if (onPurchase) onPurchase(result.vehicle);
     } catch (err) {
-      setPurchaseMsg(err.response?.data?.error || 'Purchase failed.');
+      // apiFetch throws a plain Error with .data attached
+      const msg = err?.data?.error || err?.message || 'Purchase failed.';
+      setPurchaseMsg(msg);
     } finally {
       setPurchasing(false);
     }
@@ -44,8 +46,9 @@ const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete }) => {
     try {
       await deleteVehicle(id);
       if (onDelete) onDelete(id);
-    } catch {
-      alert('Delete failed. Please try again.');
+    } catch (err) {
+      const msg = err?.data?.error || err?.message || 'Delete failed. Please try again.';
+      alert(msg);
     } finally {
       setDeleting(false);
     }

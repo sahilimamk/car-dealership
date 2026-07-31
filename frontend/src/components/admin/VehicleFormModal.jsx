@@ -147,11 +147,23 @@ export default function VehicleFormModal({ isOpen, onClose, onSuccess, vehicle }
       onSuccess(saved);
       onClose();
     } catch (err) {
-      setServerError(
-        err.response?.data?.error ||
-        err.response?.data?.details?.[0]?.message ||
-        'Something went wrong. Please try again.'
-      );
+      // apiFetch throws a plain Error; validation errors come via err.data
+      const apiErrors = err?.data?.errors;
+      if (Array.isArray(apiErrors) && apiErrors.length > 0) {
+        // Zod field errors — map them back into the errors state
+        const fieldErrors = {};
+        apiErrors.forEach(({ path: fieldPath, message }) => {
+          if (fieldPath) fieldErrors[fieldPath] = message;
+        });
+        setErrors(fieldErrors);
+        setServerError('Please fix the highlighted fields.');
+      } else {
+        setServerError(
+          err?.data?.error ||
+          err?.message ||
+          'Something went wrong. Please try again.'
+        );
+      }
     } finally {
       setLoading(false);
     }

@@ -62,7 +62,8 @@ export default function Login() {
       navigate('/', { replace: true });
     } catch (err) {
       const message =
-        err.response?.data?.error ||
+        err?.data?.error ||
+        err?.message ||
         'Something went wrong. Please try again.';
       setServerError(message);
     } finally {

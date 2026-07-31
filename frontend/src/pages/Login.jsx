@@ -93,6 +93,12 @@ export default function Login() {
             </div>
           )}
 
+          <div className="mb-5 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+            <p className="font-semibold">Demo admin access</p>
+            <p className="mt-1">Username: <span className="font-mono font-semibold">admin</span></p>
+            <p>Password: <span className="font-mono font-semibold">Admin123!</span></p>
+          </div>
+
           {/* Form */}
           <form onSubmit={handleSubmit} noValidate className="space-y-5">
 

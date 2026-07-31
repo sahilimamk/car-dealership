@@ -26,7 +26,7 @@ const restockSchema = z.object({
 	amount: z.number().int().positive('Amount must be a positive integer'),
 });
 
-router.post('/', async (req, res) => {
+router.post('/', authenticate, async (req, res) => {
 	const parsed = vehicleSchema.safeParse(req.body);
 
 	if (!parsed.success) {
@@ -84,7 +84,7 @@ router.get('/search', async (req, res) => {
 	return res.status(200).json(vehicles);
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticate, async (req, res) => {
 	const parsed = updateSchema.safeParse(req.body);
 
 	if (!parsed.success) {
@@ -105,7 +105,7 @@ router.put('/:id', async (req, res) => {
 	return res.status(200).json(updated);
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticate, adminOnly, async (req, res) => {
 	const deleted = await deleteVehicle(req.params.id);
 
 	if (!deleted) {
@@ -115,7 +115,7 @@ router.delete('/:id', async (req, res) => {
 	return res.status(200).json({ message: 'Vehicle deleted successfully.' });
 });
 
-router.post('/:id/purchase', async (req, res) => {
+router.post('/:id/purchase', authenticate, async (req, res) => {
 	const updated = await purchaseVehicle(req.params.id);
 
 	if (!updated) {
@@ -125,7 +125,7 @@ router.post('/:id/purchase', async (req, res) => {
 	return res.status(200).json({ vehicle: updated });
 });
 
-router.post('/:id/restock', async (req, res) => {
+router.post('/:id/restock', authenticate, adminOnly, async (req, res) => {
 	const parsed = restockSchema.safeParse(req.body);
 
 	if (!parsed.success) {

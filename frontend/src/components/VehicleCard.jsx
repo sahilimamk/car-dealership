@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { purchaseVehicle, deleteVehicle } from '../api/vehicles';
+import { useAuth } from '../context/AuthContext';
 
 const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete }) => {
+  const { isAdmin } = useAuth();
   const {
     id,
     make = 'Unknown Make',
@@ -85,7 +87,8 @@ const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete }) => {
           {isOutOfStock ? 'Out of Stock' : 'In Stock'}
         </div>
 
-        {/* Edit / Delete controls */}
+        {/* Edit / Delete controls — admin only */}
+        {isAdmin && (
         <div className="absolute top-3 right-3 flex gap-1">
           <button
             type="button"
@@ -103,6 +106,7 @@ const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete }) => {
             {deleting ? '…' : 'Delete'}
           </button>
         </div>
+        )}
       </div>
 
       {/* Card Content */}
@@ -174,8 +178,8 @@ const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete }) => {
             {purchasing ? 'Processing…' : isOutOfStock ? 'Out of Stock' : 'Purchase'}
           </button>
 
-          {/* Restock — shown when out of stock */}
-          {isOutOfStock && (
+          {/* Restock — shown when out of stock, admin only */}
+          {isOutOfStock && isAdmin && (
             <button
               type="button"
               onClick={() => onEdit && onEdit(vehicle)}

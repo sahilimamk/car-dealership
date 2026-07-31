@@ -17,6 +17,7 @@ import FilterSidebar from '../components/FilterSidebar';
 import VehicleFormModal from '../components/admin/VehicleFormModal';
 import { searchVehicles } from '../api/vehicles';
 import { sampleVehicles } from '../data/sampleVehicles';
+import { useAuth } from '../context/AuthContext';
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -43,6 +44,7 @@ const DEBOUNCE_MS = 300;
 // ── Component ────────────────────────────────────────────────────────────────
 
 export default function Home() {
+  const { isAdmin } = useAuth();
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState('');
@@ -185,6 +187,7 @@ export default function Home() {
             </div>
 
             {/* Add Vehicle button — admin only */}
+            {isAdmin && (
             <div className="flex items-center gap-3">
               <button
                 type="button"
@@ -194,6 +197,7 @@ export default function Home() {
                 <span>+</span> Add New Vehicle
               </button>
             </div>
+            )}
           </div>
         </div>
       </header>
@@ -302,7 +306,8 @@ export default function Home() {
         </div>
       </main>
 
-      {/* ── Vehicle modal ── */}
+      {/* ── Vehicle modal — admin only ── */}
+      {isAdmin && (
       <VehicleFormModal
         key={showAddModal ? 'add-open' : editingVehicle?.id || 'edit-closed'}
         isOpen={showAddModal || Boolean(editingVehicle)}
@@ -317,6 +322,7 @@ export default function Home() {
           closeModal();
         }}
       />
+      )}
     </div>
   );
 }
